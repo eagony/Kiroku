@@ -1,8 +1,10 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"rinterest/apis"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 func init() {
@@ -10,11 +12,12 @@ func init() {
 }
 
 func main() {
-	r := gin.Default()
-	apiV1 := r.Group("api/v1")
+	router := gin.Default()
+	router.Use(cors.Default())
 
+	apiV1 := router.Group("api/v1")
 	new(apis.UserAPI).Register(apiV1)
 	new(apis.ToDoAPI).Register(apiV1)
 
-	r.Run(":8000") // 监听并在 0.0.0.0:8080 上启动服务
+	router.Run(":8000") // 监听并在 0.0.0.0:8080 上启动服务
 }

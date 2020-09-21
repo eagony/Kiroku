@@ -1,13 +1,15 @@
 package apis
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"rinterest/extensions"
 	"rinterest/models"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
+// GeneralAPI ...
 type GeneralAPI struct{}
 
 // CreateOne 新建一个

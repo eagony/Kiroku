@@ -1,26 +1,26 @@
 package models
 
 import (
-	"fmt"
 	"github.com/jinzhu/gorm"
 )
 
+// ToDo 代办模型
 type ToDo struct {
 	gorm.Model
-	Summary  string `json:"summary"`
-	Detail   string `json:"detail"`
-	Priority uint8  `json:"priority"`
-	DeadLine string `json:"deadline"`
+	Text string `json:"text" gorm:"type:varchar(1024)"`
+	Done bool   `json:"done"`
+
+	// Foreignkey
+	UserID uint `json:"user_id"`
 }
 
 func (td *ToDo) String() string {
-	return fmt.Sprintf(
-		"Summary: %v,\nDetail: %v,\nPriority: %v,\nDeadLine%v,\n",
-		td.Summary,
-		td.Detail,
-		td.Priority,
-		td.DeadLine,
-	)
+	return ""
+}
+
+// TableName ...
+func (td ToDo) TableName() string {
+	return "todos"
 }
 
 func init() {
