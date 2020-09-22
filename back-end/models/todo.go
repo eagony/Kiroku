@@ -19,7 +19,7 @@ func (td *ToDo) String() string {
 }
 
 // TableName ...
-func (td ToDo) TableName() string {
+func (td *ToDo) TableName() string {
 	return "todos"
 }
 

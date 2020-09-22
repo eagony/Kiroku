@@ -36,7 +36,7 @@
         <!--        </v-card>-->
 
         <v-card class="elevation-12">
-          <v-toolbar color="teal" dark flat>
+          <v-toolbar color="white" light flat>
             <v-toolbar-title>登陆到Rinterest</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-tooltip bottom>
@@ -92,7 +92,7 @@ export default {
   },
   methods: {
     doLogin() {
-      const path = '/api/v1/users/login';
+      const path = '/users/login';
       this.$axios
         .post(path, {
           username: this.username,

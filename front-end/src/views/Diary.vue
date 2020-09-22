@@ -4,7 +4,7 @@
       <v-col cols="12">
         <v-card>
           <v-card-title v-if="!adding">
-            <div class="text-justify text--black">共100篇日记</div>
+            <div class="text-justify text--black">共 {{ diaries.length }} 篇日记</div>
             <v-spacer></v-spacer>
             <div>
               <v-btn class="mx-2" fab dark color="teal" @click="adding = true">
@@ -15,6 +15,7 @@
 
           <v-card-text v-if="adding">
             <v-textarea
+              v-model="content"
               auto-grow
               counter
               name="input-7-4"
@@ -23,15 +24,15 @@
             <v-row class="ml-1">
               <v-chip-group
                 column
-                v-for="chip in chips"
-                :key="chip.name"
+                v-for="(chip, index) in chips"
+                :key="chip.ID"
                 multiple
-                v-model="selections"
+                v-model="selectedChips"
                 active-class="teal--text text--accent-4"
               >
-                <v-chip :value="chip.name">{{ chip.name }}</v-chip>
+              
+                <v-chip :value="index"><v-icon left>{{ chip.icon || 'mdi-label'}}</v-icon>{{ chip.text }}</v-chip>
               </v-chip-group>
-              {{ selections }}
             </v-row>
           </v-card-text>
           <v-card-actions v-if="adding">
@@ -46,45 +47,38 @@
             <v-btn
               class="white--text"
               color="teal accent-4"
-              @click="adding = false"
+              @click="addDiary"
             >
               完成
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
-      <v-col v-for="(item, i) in 4" :key="i" cols="12">
+      <v-col v-for="diary in diaries" :key="diary.ID" cols="12">
         <v-card class="mx-auto">
           <v-card-title>
-            <p class="text-justify">{{ date }}({{ day }})</p>
+            <p class="text-justify">{{ diary.CreatedAt.split('T')[0] }}({{ getDay(diary.CreatedAt.split('T')[0]) }})</p>
           </v-card-title>
 
           <v-card-text>
             <div class="text-justify text-body-1 text--black">
-              很真实地欣赏着自己的心 偶然间我与你面对面坐下来 而你只是说出两个字
-              明天 现在我们俩只能在静寂中煎熬 悲哀于瞬息之间 其实人生并不重要
-              和遥远的童年一样 在那恬美爱情的时候 我们梦想着每一种不同质的东西
-              面对一个梦萧萧的秋季 看见有生命力的枯叶 或在沉默之中开口
-              为你描述故事的主角 只是每次要等到经历最困难的时候
-              我们才能学会如何去歪曲生命的定义 岁月是没有承诺的
-              我们靠各种努力才能建立起 毫无价值的精神财富 在透明的景色里
-              一层一层将自己包装起来
+              {{ diary.content }}
             </div>
           </v-card-text>
 
           <v-divider class="mt-6 mx-4"></v-divider>
 
-          <v-card-text>
+          <v-card-text  class="d-flex align-center">
             <v-chip
-              v-for="chip in chips"
-              :key="chip.name"
+              v-for="(tag, index) in diary.tags.split(';')"
+              :key="index"
               class="ma-2"
-              :color="chip.color"
+              :color="tag.split(',')[2]"
               label
               text-color="white"
             >
-              <v-icon left>mdi-label</v-icon>
-              {{ chip.name }}
+              <v-icon left>{{ tag.split(',')[0] || 'mdi-label'}}</v-icon>
+              {{ tag.split(',')[1] }}
             </v-chip>
           </v-card-text>
         </v-card>
@@ -102,36 +96,87 @@ export default {
     date: moment().format('YYYY.MM.DD'),
     day: moment().format('dddd'),
     adding: false,
-    chips: [
-      {
-        name: '开心',
-        color: 'red',
-        icon: ''
-      },
-      {
-        name: '失落',
-        color: 'grey',
-        icon: ''
-      },
-      {
-        name: '晴朗',
-        color: 'blue',
-        icon: ''
-      },
-      {
-        name: '大雨',
-        color: 'green',
-        icon: ''
-      },
-      {
-        name: '电影',
-        color: 'orange',
-        icon: ''
-      }
-    ],
-    selections: []
+    tags: '',
+    content: '',
+    chips: [],
+    diaries: [],
+    selectedChips: []
   }),
-  methods: {}
+  methods: {
+    getDay(date) {
+      return moment(date).format('dddd')
+    },
+    getTags() {
+      this.$axios({
+        method: 'get',
+        url: `/tags`,
+        headers: {
+          Authorization: 'Bearer ' + window.localStorage.getItem('r-token')
+        }
+      })
+        .then(res => {
+          console.log(res.data);
+          this.chips = res.data.data;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    getDiaryList() {
+      this.$axios({
+        method: 'get',
+        url: `/users/${this.$store.state.user.id}/diaries`,
+        headers: {
+          Authorization: 'Bearer ' + window.localStorage.getItem('r-token')
+        }
+      })
+        .then(res => {
+          console.log(res.data);
+          this.diaries = res.data.data;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    addDiary() {
+      for (var i = 0, len = this.selectedChips.length; i < len; i++) {
+        this.tags +=
+          this.chips[this.selectedChips[i]].icon +
+          ',' +
+          this.chips[this.selectedChips[i]].text +
+          ',' +
+          this.chips[this.selectedChips[i]].color +
+          ';';
+      }
+      this.$axios({
+        method: 'post',
+        url: '/diaries',
+        data: {
+          tags: this.tags.slice(0, -1),
+          content: this.content,
+          user_id: this.$store.state.user.id
+        },
+        headers: {
+          Authorization: 'Bearer ' + window.localStorage.getItem('r-token')
+        }
+      })
+        .then(() => {
+          console.log('新建日记成功');
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      this.tags = '',
+      this.adding = false
+      this.content = null;
+      this.selectedChips = []
+      this.getDiaryList();
+    }
+  },
+  mounted() {
+    this.getDiaryList();
+    this.getTags();
+  }
 };
 </script>
 

@@ -14,12 +14,12 @@ import (
 func NewToken(user *models.User) (tokens string, err error) {
 	claim := jwt.MapClaims{
 		"id":        user.ID,
-		"Role":      user.Role,
-		"Email":     user.Email,
-		"Phone":     user.Phone,
-		"Avatar":    user.Avatar,
-		"Username":  user.Username,
-		"Signature": user.Signature,
+		"role":      user.Role,
+		"email":     user.Email,
+		"phone":     user.Phone,
+		"avatar":    user.Avatar,
+		"username":  user.Username,
+		"signature": user.Signature,
 		"iat":       time.Now().Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)

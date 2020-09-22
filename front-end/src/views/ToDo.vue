@@ -77,7 +77,7 @@ export default {
 
   methods: {
     getToDoList() {
-      const path = `/api/v1/users/${this.$store.state.user.id}/todos`;
+      const path = `/users/${this.$store.state.user.id}/todos`;
       this.$axios({
         method: 'get',
         url: path,
@@ -87,14 +87,14 @@ export default {
       })
         .then(res => {
           console.log(res.data);
-          this.tasks = res.data.data.ToDos;
+          this.tasks = res.data.data;
         })
         .catch(err => {
           console.log(err);
         });
     },
     addTask() {
-      const path = '/api/v1/todos';
+      const path = '/todos';
       this.$axios({
         method: 'post',
         url: path,
@@ -122,7 +122,7 @@ export default {
       this.task = null;
     },
     updateTask(task) {
-      const path = `/api/v1/todos/${task.ID}`;
+      const path = `/todos/${task.ID}`;
       this.$axios({
         method: 'put',
         url: path,

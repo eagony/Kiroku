@@ -101,13 +101,33 @@ func (u *UserAPI) todolist(c *gin.Context) {
 		return
 	}
 
-	data := []models.User{}
+	user := models.User{}
 
-	extensions.MySQL().Preload("ToDos").Where("id = ?", userID).Find(&data)
+	extensions.MySQL().Preload("ToDos").Where("id = ?", userID).Find(&user)
 
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  "OK",
 		"message": "success",
-		"data":    data,
+		"data":    user.ToDos,
+	})
+}
+
+func (u *UserAPI) diarylist(c *gin.Context) {
+	userID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"Convert id error": err.Error(),
+		})
+		return
+	}
+
+	user := models.User{}
+
+	extensions.MySQL().Order("created_at desc").Preload("Diaries").Where("id = ?", userID).Find(&user)
+
+	c.IndentedJSON(http.StatusOK, gin.H{
+		"status":  "OK",
+		"message": "success",
+		"data":    user.Diaries,
 	})
 }

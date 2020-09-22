@@ -2,6 +2,7 @@ package extensions
 
 import (
 	"fmt"
+
 	"github.com/garyburd/redigo/redis"
 )
 
@@ -13,10 +14,10 @@ func init() {
 		fmt.Println("Connect redis failed,", err)
 		return
 	}
-	fmt.Println("Connect redis success")
 	myredis = conn
 }
 
+// Redis ...
 func Redis() redis.Conn {
 	return myredis
 }

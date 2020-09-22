@@ -30,7 +30,11 @@ export default new Vuex.Store({
       username: window.localStorage.getItem('r-token')
         ? JSON.parse(atob(window.localStorage.getItem('r-token').split('.')[1]))
             .username
-        : ''
+        : '',
+      signature: window.localStorage.getItem('r-token')
+        ? JSON.parse(atob(window.localStorage.getItem('r-token').split('.')[1]))
+            .signature
+        : '',
     }
   },
   getters: {

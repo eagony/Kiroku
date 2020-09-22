@@ -15,8 +15,10 @@ type User struct {
 	Avatar    string `json:"avatar"`
 	Signature string `json:"signature"`
 
-	// One to Many
+	// 用户代办列表，一对多
 	ToDos []ToDo
+	// 用户日记列表，一对多
+	Diaries []Diary
 }
 
 func (u *User) String() string {
