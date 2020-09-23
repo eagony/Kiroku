@@ -21,8 +21,6 @@ func (u *UserAPI) Register(rg *gin.RouterGroup) {
 	rg.POST("/users/register", u.register)
 	rg.POST("/users/login", u.login)
 
-	//
-	rg.GET("/users/:id/todos", middlewares.JWT(), u.todolist)
 }
 
 func (u *UserAPI) register(c *gin.Context) {

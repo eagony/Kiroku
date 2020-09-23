@@ -18,12 +18,18 @@
 
       <v-spacer></v-spacer>
 
-      <v-badge color="green" overlap>
+      <a
+        class="text-decoration-none"
+        href="https://github.com/eagony/Rinterest"
+      >
+        <v-icon medium>mdi-github</v-icon>
+      </a>
+      <!-- <v-badge color="green" overlap>
         <span slot="badge">
           1
         </span>
         <v-icon medium>notifications</v-icon>
-      </v-badge>
+      </v-badge> -->
     </v-app-bar>
 
     <!-- 导航抽屉 -->

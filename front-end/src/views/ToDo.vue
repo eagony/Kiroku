@@ -25,9 +25,9 @@
       solo
       v-model="task"
       label="点击新建，回车完成..."
-      @keydown.enter="addTask"
+      @keypress.enter="addTask"
     >
-      <template slot="append">
+      <template v-slot:append>
         <v-icon v-if="task" @click="addTask">
           add
         </v-icon>
@@ -57,6 +57,8 @@
 </template>
 
 <script>
+import Toast from '../plugins/toast'
+
 export default {
   data: () => ({
     tasks: [],
@@ -76,6 +78,9 @@ export default {
   },
 
   methods: {
+    a() {
+      alert('淦');
+    },
     getToDoList() {
       const path = `/users/${this.$store.state.user.id}/todos`;
       this.$axios({
@@ -94,10 +99,9 @@ export default {
         });
     },
     addTask() {
-      const path = '/todos';
       this.$axios({
         method: 'post',
-        url: path,
+        url: '/todos',
         data: {
           done: false,
           text: this.task,
@@ -141,6 +145,10 @@ export default {
         .catch(err => {
           console.log(err);
         });
+    Toast.fire({
+      icon: 'success',
+      title: 'Good job！'
+    });
     }
   },
   mounted() {

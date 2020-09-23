@@ -1,11 +1,15 @@
 import Vue from 'vue';
+import store from '../store';
 import VueRouter from 'vue-router';
+// plugins
+import Swal from 'sweetalert2';
+import Toast from '../plugins/toast';
+// views
 import ToDo from '@/views/ToDo';
 import Login from '@/views/Login';
 import Diary from '@/views/Diary';
-import Swal from 'sweetalert2';
-import store from '../store';
-import Toast from '../plugins/toast';
+import Blog from '@/views/Blog';
+import BlogDetail from '@/views/BlogDetail';
 
 Vue.use(VueRouter);
 
@@ -32,6 +36,24 @@ const routes = [
     path: '/diary',
     name: 'Diary',
     component: Diary,
+    meta: {
+      requireLogin: true,
+      requireAdmin: false
+    }
+  },
+  {
+    path: '/blog',
+    name: 'Blog',
+    component: Blog,
+    meta: {
+      requireLogin: true,
+      requireAdmin: false
+    }
+  },
+  {
+    path: '/blogs/:id',
+    name: 'BlogDetail',
+    component: BlogDetail,
     meta: {
       requireLogin: true,
       requireAdmin: false

@@ -20,6 +20,7 @@ func main() {
 	new(apis.ToDoAPI).Register(apiV1)
 	new(apis.TagAPI).Register(apiV1)
 	new(apis.DiaryAPI).Register(apiV1)
+	new(apis.BlogAPI).Register(apiV1)
 
 	router.Run(":8000") // 监听并在 0.0.0.0:8080 上启动服务
 }

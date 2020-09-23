@@ -4,7 +4,9 @@
       <v-col cols="12">
         <v-card>
           <v-card-title v-if="!adding">
-            <div class="text-justify text--black">共 {{ diaries.length }} 篇日记</div>
+            <div class="text-justify text--black">
+              共 {{ diaries.length }} 篇日记
+            </div>
             <v-spacer></v-spacer>
             <div>
               <v-btn class="mx-2" fab dark color="teal" @click="adding = true">
@@ -30,8 +32,10 @@
                 v-model="selectedChips"
                 active-class="teal--text text--accent-4"
               >
-              
-                <v-chip :value="index"><v-icon left>{{ chip.icon || 'mdi-label'}}</v-icon>{{ chip.text }}</v-chip>
+                <v-chip :value="index"
+                  ><v-icon left>{{ chip.icon || 'mdi-label' }}</v-icon
+                  >{{ chip.text }}</v-chip
+                >
               </v-chip-group>
             </v-row>
           </v-card-text>
@@ -44,11 +48,7 @@
             >
               取消
             </v-btn>
-            <v-btn
-              class="white--text"
-              color="teal accent-4"
-              @click="addDiary"
-            >
+            <v-btn class="white--text" color="teal accent-4" @click="addDiary">
               完成
             </v-btn>
           </v-card-actions>
@@ -57,7 +57,11 @@
       <v-col v-for="diary in diaries" :key="diary.ID" cols="12">
         <v-card class="mx-auto">
           <v-card-title>
-            <p class="text-justify">{{ diary.CreatedAt.split('T')[0] }}({{ getDay(diary.CreatedAt.split('T')[0]) }})</p>
+            <p class="text-justify">
+              {{ diary.CreatedAt.split('T')[0] }}({{
+                getDay(diary.CreatedAt.split('T')[0])
+              }})
+            </p>
           </v-card-title>
 
           <v-card-text>
@@ -68,7 +72,7 @@
 
           <v-divider class="mt-6 mx-4"></v-divider>
 
-          <v-card-text  class="d-flex align-center">
+          <v-card-text class="d-flex align-center">
             <v-chip
               v-for="(tag, index) in diary.tags.split(';')"
               :key="index"
@@ -77,7 +81,7 @@
               label
               text-color="white"
             >
-              <v-icon left>{{ tag.split(',')[0] || 'mdi-label'}}</v-icon>
+              <v-icon left>{{ tag.split(',')[0] || 'mdi-label' }}</v-icon>
               {{ tag.split(',')[1] }}
             </v-chip>
           </v-card-text>
@@ -104,7 +108,7 @@ export default {
   }),
   methods: {
     getDay(date) {
-      return moment(date).format('dddd')
+      return moment(date).format('dddd');
     },
     getTags() {
       this.$axios({
@@ -166,10 +170,9 @@ export default {
         .catch(err => {
           console.log(err);
         });
-      this.tags = '',
-      this.adding = false
+      (this.tags = ''), (this.adding = false);
       this.content = null;
-      this.selectedChips = []
+      this.selectedChips = [];
       this.getDiaryList();
     }
   },

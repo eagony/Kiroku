@@ -16,7 +16,7 @@ func init() {
 		panic("Connect to MySQL has failed.")
 	}
 	mysql = conn
-	mysql.Debug().AutoMigrate(&models.User{}, &models.ToDo{}, &models.Tag{}, &models.Diary{})
+	mysql.Debug().AutoMigrate(&models.User{}, &models.ToDo{}, &models.Tag{}, &models.Diary{}, &models.Blog{})
 }
 
 // MySQL ...

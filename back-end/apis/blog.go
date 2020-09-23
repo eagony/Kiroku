@@ -3,34 +3,32 @@ package apis
 import (
 	"net/http"
 	"rinterest/extensions"
-	"rinterest/middlewares"
 	"rinterest/models"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-// DiaryAPI ...
-type DiaryAPI struct{}
+// BlogAPI 博客API
+type BlogAPI struct{}
 
 // Register ...
-func (d *DiaryAPI) Register(rg *gin.RouterGroup) {
-	rg.POST("/diaries", d.newone)
-	rg.GET("/diaries/:id", d.getone)
-
-	rg.GET("/users/:id/diaries", middlewares.JWT(), d.getallbyuserid)
+func (b *BlogAPI) Register(rg *gin.RouterGroup) {
+	rg.POST("/blogs", b.newone)
+	rg.GET("/blogs/:id", b.getone)
+	rg.GET("/users/:id/blogs", b.getallbyuserid)
 }
 
-func (d *DiaryAPI) newone(c *gin.Context) {
-	diary := models.Diary{}
-	if err := c.ShouldBindJSON(&diary); err != nil {
+func (b *BlogAPI) newone(c *gin.Context) {
+	blog := models.Blog{}
+	if err := c.ShouldBindJSON(&blog); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"Bind error": err.Error(),
 		})
 		return
 	}
 
-	if err := extensions.MySQL().Create(&diary).Error; err != nil {
+	if err := extensions.MySQL().Create(&blog).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"Create error": err.Error(),
 		})
@@ -40,11 +38,11 @@ func (d *DiaryAPI) newone(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  200,
 		"message": " create success",
-		"data":    diary,
+		"data":    blog,
 	})
 }
 
-func (d *DiaryAPI) getone(c *gin.Context) {
+func (b *BlogAPI) getone(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
@@ -53,8 +51,8 @@ func (d *DiaryAPI) getone(c *gin.Context) {
 		return
 	}
 
-	diary := models.Diary{}
-	if err = extensions.MySQL().Where("id = ?", id).Find(&diary).Error; err != nil {
+	blog := models.Blog{}
+	if err = extensions.MySQL().Where("id = ?", id).Find(&blog).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"Query error": err.Error(),
 		})
@@ -63,11 +61,11 @@ func (d *DiaryAPI) getone(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  "OK",
 		"message": "success",
-		"data":    diary,
+		"data":    blog,
 	})
 }
 
-func (d *DiaryAPI) getallbyuserid(c *gin.Context) {
+func (b *BlogAPI) getallbyuserid(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
@@ -76,8 +74,8 @@ func (d *DiaryAPI) getallbyuserid(c *gin.Context) {
 		return
 	}
 
-	diaries := []models.Diary{}
-	if err = extensions.MySQL().Where("user_id = ?", id).Order("created_at desc").Find(&diaries).Error; err != nil {
+	bloges := []models.Blog{}
+	if err = extensions.MySQL().Where("user_id = ?", id).Order("created_at desc").Find(&bloges).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"Query error": err.Error(),
 		})
@@ -86,6 +84,6 @@ func (d *DiaryAPI) getallbyuserid(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  "OK",
 		"message": "success",
-		"data":    diaries,
+		"data":    bloges,
 	})
 }

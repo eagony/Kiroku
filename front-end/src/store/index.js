@@ -34,7 +34,7 @@ export default new Vuex.Store({
       signature: window.localStorage.getItem('r-token')
         ? JSON.parse(atob(window.localStorage.getItem('r-token').split('.')[1]))
             .signature
-        : '',
+        : ''
     }
   },
   getters: {
