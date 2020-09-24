@@ -37,7 +37,7 @@
     <v-card v-for="(task, i) in tasks" :key="`${i}-divider`">
       <v-card-title>
         <v-spacer></v-spacer>
-        <div :class="(task.done && 'grey--text') || 'primary--text'">
+        <div :class="(task.done && 'grey--text') || 'success--text'">
           {{ task.text }}
           <v-spacer></v-spacer>
         </div>
@@ -49,7 +49,7 @@
             :class="(task.done && 'success--text') || 'primary--text'"
             @click="updateTask(task)"
           ></v-checkbox>
-          <v-icon>delete</v-icon>
+          <v-icon @click="deleteTask(task.ID)">delete</v-icon>
         </div>
       </v-card-title>
     </v-card>
@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import Toast from '../plugins/toast'
+import Toast from '../plugins/toast';
 
 export default {
   data: () => ({
@@ -125,6 +125,31 @@ export default {
 
       this.task = null;
     },
+    deleteTask(id) {
+      this.$axios({
+        method: 'delete',
+        url: `/todos/${id}`,
+        headers: {
+          Authorization: 'Bearer ' + window.localStorage.getItem('r-token')
+        }
+      })
+        .then(res => {
+          console.log(res);
+          if (res.status == 200) {
+            Toast.fire({
+              icon: 'success',
+              title: '删除成功。'
+            });
+          }
+          this.getToDoList();
+        })
+        .catch(err => {
+          Toast.fire({
+            icon: 'error',
+            title: `删除失败, 错误${err}`
+          });
+        });
+    },
     updateTask(task) {
       const path = `/todos/${task.ID}`;
       this.$axios({
@@ -145,10 +170,10 @@ export default {
         .catch(err => {
           console.log(err);
         });
-    Toast.fire({
-      icon: 'success',
-      title: 'Good job！'
-    });
+      Toast.fire({
+        icon: 'success',
+        title: 'Good job！'
+      });
     }
   },
   mounted() {

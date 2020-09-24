@@ -62,6 +62,10 @@
                 getDay(diary.CreatedAt.split('T')[0])
               }})
             </p>
+            <v-spacer></v-spacer>
+            <v-icon @click="deleteDiary(diary.ID)"
+              >mdi-trash-can-outline</v-icon
+            >
           </v-card-title>
 
           <v-card-text>
@@ -93,6 +97,7 @@
 
 <script>
 import moment from '../plugins/moment';
+import Toast from '../plugins/toast';
 
 export default {
   name: 'Diary',
@@ -140,6 +145,30 @@ export default {
         })
         .catch(err => {
           console.log(err);
+        });
+    },
+    deleteDiary(id) {
+      this.$axios({
+        method: 'delete',
+        url: `/diaries/${id}`,
+        headers: {
+          Authorization: 'Bearer ' + window.localStorage.getItem('r-token')
+        }
+      })
+        .then(res => {
+          if (res.status == 200) {
+            Toast.fire({
+              icon: 'success',
+              title: '删除成功!'
+            });
+            this.getDiaryList();
+          }
+        })
+        .catch(err => {
+          Toast.fire({
+            icon: 'error',
+            title: `删除失败，错误${err}`
+          });
         });
     },
     addDiary() {

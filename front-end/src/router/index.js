@@ -5,15 +5,26 @@ import VueRouter from 'vue-router';
 import Swal from 'sweetalert2';
 import Toast from '../plugins/toast';
 // views
-import ToDo from '@/views/ToDo';
+import Register from '@/views/Register';
 import Login from '@/views/Login';
+import ToDo from '@/views/ToDo';
 import Diary from '@/views/Diary';
 import Blog from '@/views/Blog';
 import BlogDetail from '@/views/BlogDetail';
+import Square from '@/views/Square';
 
 Vue.use(VueRouter);
 
 const routes = [
+  {
+    path: '/register',
+    name: 'Register',
+    component: Register,
+    meta: {
+      requireLogin: false,
+      requireAdmin: false
+    }
+  },
   {
     path: '/login',
     name: 'Login',
@@ -60,6 +71,15 @@ const routes = [
     }
   },
   {
+    path: '/square',
+    name: 'Square',
+    component: Square,
+    meta: {
+      requireLogin: true,
+      requireAdmin: false
+    }
+  },
+  {
     path: '/admin',
     name: 'Admin',
     component: () => import('../views/Admin'),
@@ -75,7 +95,11 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "about" */ '../views/About.vue')
+      import(/* webpackChunkName: "about" */ '../views/About.vue'),
+    meta: {
+      requireLogin: true,
+      requireAdmin: false
+    }
   }
 ];
 

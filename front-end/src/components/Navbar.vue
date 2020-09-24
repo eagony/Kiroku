@@ -11,19 +11,34 @@
       <v-app-bar-nav-icon class="grey--text" @click="drawer = !drawer">
       </v-app-bar-nav-icon>
 
-      <v-toolbar-title class="grey--text" @click="toIndex">
-        <span class="font-weight-dark">R</span>
-        <span class="font-weight-light">interest</span>
+      <v-toolbar-title @click="toIndex">
+        <!-- <span class="font-weight-dark">R</span>
+        <span class="font-weight-light">interest</span> -->
+        <!-- <span class="text-h5 font-weight-dark">Kiroku</span> -->
+        <a class="text-decoration-none" href="/">
+          <span class="text-h5 font-weight-dark" style="color:teal;"
+            >Kiroku</span
+          ></a
+        >
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
+      <v-toolbar-title v-if="this.$route.path != '/square'">
+        <a class="text-decoration-none mr-5" href="/square">
+          <span class=" text-h6 font-weight-dark" style="color:black;"
+            >发现</span
+          >
+        </a>
+      </v-toolbar-title>
+      <v-toolbar-title>
+        <a
+          class="text-decoration-none"
+          href="https://github.com/eagony/Rinterest"
+        >
+          <span class="font-weight-dark" style="color:black;">Github</span></a
+        >
+      </v-toolbar-title>
 
-      <a
-        class="text-decoration-none"
-        href="https://github.com/eagony/Rinterest"
-      >
-        <v-icon medium>mdi-github</v-icon>
-      </a>
       <!-- <v-badge color="green" overlap>
         <span slot="badge">
           1
@@ -88,13 +103,13 @@ export default {
       snackbar: false,
       drawer: false,
       items: [
-        { title: '代办', icon: 'dashboard', route: '/' },
-        { title: '日记', icon: 'account_box', route: '/diary' },
-        { title: '博客', icon: 'mdi-image', route: '/blog' },
-        { title: '文件', icon: 'mdi-file', route: '/file' },
-        { title: 'Admin', icon: 'gavel' },
-        { icon: 'settings', title: 'Settings', route: '/settings' },
-        { title: 'About', icon: 'mdi-help-box' }
+        { title: '代办', icon: 'mdi-format-list-bulleted', route: '/' },
+        { title: '日记', icon: 'mdi-book-open-blank-variant', route: '/diary' },
+        { title: '博客', icon: 'mdi-post-outline', route: '/blog' },
+        // { title: '文件', icon: 'mdi-file', route: '/file' },
+        { title: '管理', icon: 'mdi-chart-donut', route: '/admin' },
+        { title: '设置', icon: 'mdi-cog-outline', route: '/settings' },
+        { title: '关于', icon: 'mdi-help-box', route: '/about' }
       ]
     };
   },

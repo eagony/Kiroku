@@ -17,6 +17,7 @@ type DiaryAPI struct{}
 func (d *DiaryAPI) Register(rg *gin.RouterGroup) {
 	rg.POST("/diaries", d.newone)
 	rg.GET("/diaries/:id", d.getone)
+	rg.DELETE("/diaries/:id", d.deleteone)
 
 	rg.GET("/users/:id/diaries", middlewares.JWT(), d.getallbyuserid)
 }
@@ -41,6 +42,29 @@ func (d *DiaryAPI) newone(c *gin.Context) {
 		"status":  200,
 		"message": " create success",
 		"data":    diary,
+	})
+}
+
+func (d *DiaryAPI) deleteone(c *gin.Context) {
+	id, idError := strconv.Atoi(c.Param("id"))
+	if idError != nil || id < 0 {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"Convert id error": idError,
+		})
+		return
+	}
+
+	if err := extensions.MySQL().Delete(&models.Diary{}, id).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"Delete error": err,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Delete succed.",
+		"status":  "OK",
+		"data":    "",
 	})
 }
 
