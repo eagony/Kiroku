@@ -12,6 +12,7 @@ import Diary from '@/views/Diary';
 import Blog from '@/views/Blog';
 import BlogDetail from '@/views/BlogDetail';
 import Square from '@/views/Square';
+import Settings from '@/views/Settings';
 
 Vue.use(VueRouter);
 
@@ -65,6 +66,15 @@ const routes = [
     path: '/blogs/:id',
     name: 'BlogDetail',
     component: BlogDetail,
+    meta: {
+      requireLogin: true,
+      requireAdmin: false
+    }
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: Settings,
     meta: {
       requireLogin: true,
       requireAdmin: false

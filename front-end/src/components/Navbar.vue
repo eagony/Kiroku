@@ -1,11 +1,5 @@
 <template>
   <nav>
-    <!-- 消息条 -->
-    <v-snackbar v-model="snackbar" :timeout="4000" top color="success">
-      <span>Wow! You added a new project.</span>
-      <v-btn text color="white" @click="snackbar = false">Close</v-btn>
-    </v-snackbar>
-
     <!-- 应用栏 -->
     <v-app-bar app elevation="2" color="white">
       <v-app-bar-nav-icon class="grey--text" @click="drawer = !drawer">
@@ -16,7 +10,7 @@
         <span class="font-weight-light">interest</span> -->
         <!-- <span class="text-h5 font-weight-dark">Kiroku</span> -->
         <a class="text-decoration-none" href="/">
-          <span class="text-h5 font-weight-dark" style="color:teal;"
+          <span class="text-h4 font-weight-dark" style="color:teal;"
             >Kiroku</span
           ></a
         >
@@ -38,19 +32,12 @@
           <span class="font-weight-dark" style="color:black;">Github</span></a
         >
       </v-toolbar-title>
-
-      <!-- <v-badge color="green" overlap>
-        <span slot="badge">
-          1
-        </span>
-        <v-icon medium>notifications</v-icon>
-      </v-badge> -->
     </v-app-bar>
 
     <!-- 导航抽屉 -->
     <v-navigation-drawer v-model="drawer" app dark color="teal">
       <v-list dense nav>
-        <v-list-item two-line link>
+        <v-list-item two-line>
           <v-list-item-avatar>
             <img src="https://randomuser.me/api/portraits/men/81.jpg" />
           </v-list-item-avatar>
@@ -100,7 +87,6 @@ export default {
     return {
       messages: 10,
       show: true,
-      snackbar: false,
       drawer: false,
       items: [
         { title: '代办', icon: 'mdi-format-list-bulleted', route: '/' },

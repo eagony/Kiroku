@@ -73,22 +73,22 @@
               {{ diary.content }}
             </div>
           </v-card-text>
-
           <v-divider class="mt-6 mx-4"></v-divider>
-
-          <v-card-text class="d-flex align-center">
-            <v-chip
-              v-for="(tag, index) in diary.tags.split(';')"
-              :key="index"
-              class="ma-2"
-              :color="tag.split(',')[2]"
-              label
-              text-color="white"
-            >
-              <v-icon left>{{ tag.split(',')[0] || 'mdi-label' }}</v-icon>
-              {{ tag.split(',')[1] }}
-            </v-chip>
-          </v-card-text>
+          <v-card-actions>
+            <v-row class="mx-1" justify="center" align="center">
+              <v-chip
+                v-for="(tag, index) in diary.tags.split(';')"
+                :key="index"
+                class="ma-2"
+                :color="tag.split(',')[2]"
+                label
+                text-color="white"
+              >
+                <v-icon left>{{ tag.split(',')[0] || 'mdi-label' }}</v-icon>
+                {{ tag.split(',')[1] }}
+              </v-chip>
+            </v-row>
+          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>

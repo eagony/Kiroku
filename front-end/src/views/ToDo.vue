@@ -124,6 +124,7 @@ export default {
       });
 
       this.task = null;
+      this.getToDoList();
     },
     deleteTask(id) {
       this.$axios({

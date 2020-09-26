@@ -31,6 +31,7 @@
               </v-col>
               <v-col cols="12">
                 <v-textarea
+                class="ml-2"
                   v-model="summary"
                   auto-grow
                   counter
@@ -65,33 +66,25 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" v-for="blog in blogs" :key="blog.ID">
-        <v-card class="">
+      <v-col cols="12" md="4" v-for="blog in blogs" :key="blog.ID">
+        <v-card class="" min-height="400">
           <v-card-title class="d-flex justify-center">
             <span class="title font-weight-regular">{{ blog.title }}</span>
           </v-card-title>
 
           <v-card-text>
-            <div class="text-h6 font-weight-regular ml-1 mr-1">
+            <div
+              class="text-h6 font-weight-regular ml-1 mr-1"
+              style="min-height: 150px;"
+            >
               {{ blog.summary }}
             </div>
           </v-card-text>
+          <v-divider></v-divider>
 
           <v-card-actions>
-            <v-list-item class="grow">
-              <v-row align="center" justify="start">
-                <v-list-item-avatar color="grey darken-3">
-                  <v-img
-                    class="elevation-6"
-                    src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
-                  ></v-img>
-                </v-list-item-avatar>
-
-                <v-list-item-content>
-                  <v-list-item-title>Evan You</v-list-item-title>
-                </v-list-item-content>
-              </v-row>
-              <v-row align="center" justify="center">
+            <v-row>
+              <v-row justify="center">
                 <v-chip
                   v-for="(chip, index) in chips"
                   :key="index"
@@ -105,14 +98,19 @@
                 </v-chip>
               </v-row>
 
-              <v-row align="center" justify="end">
-                <v-icon class="mr-1">mdi-eye-outline</v-icon>
-                <span class="subheading mr-2">256</span>
-                <span class="mr-1">·</span>
-                <v-icon class="mr-1">mdi-heart-outline</v-icon>
+              <v-row class="mt-3 pt-3 pb-3" justify="center">
+                <v-icon class="mr-2">mdi-eye-outline</v-icon>
+                <span class="subheading">256</span>
+                <v-divider vertical class="ml-5 mr-5"></v-divider>
+                <v-icon class="mr-2">mdi-heart-outline</v-icon>
                 <span class="subheading">45</span>
+                <v-divider vertical class="ml-5 mr-5"></v-divider>
+                <v-icon class="mr-2">mdi-comment-outline</v-icon>
+                <span class="subheading">45</span>
+                <v-divider vertical class="ml-5 mr-5"></v-divider>
+                <v-icon>mdi-trash-can-outline</v-icon>
               </v-row>
-            </v-list-item>
+            </v-row>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -121,6 +119,8 @@
 </template>
 
 <script>
+import Toast from '../plugins/toast';
+
 export default {
   name: 'Blog',
   data() {
@@ -173,6 +173,7 @@ export default {
         url: '/blogs',
         data: {
           title: this.title,
+          summary: this.summary,
           content: this.content,
           user_id: this.$store.state.user.id
         },
@@ -182,10 +183,20 @@ export default {
       })
         .then(() => {
           console.log('新建博客成功');
+          Toast.fire({
+            icon: 'success',
+            title: '成功！',
+            text: '成功新建一篇博客。'
+          });
         })
         .catch(err => {
           console.log(err);
         });
+      this.adding = false;
+      this.title = '';
+      this.summary = '';
+      this.content = '';
+      this.getBlogList();
     }
   },
   mounted() {
