@@ -11,16 +11,13 @@ import (
 )
 
 // ToDoAPI ...
-type ToDoAPI struct {
-	G GeneralAPI
-}
+type ToDoAPI struct{}
 
 // Register ...
 func (t *ToDoAPI) Register(rg *gin.RouterGroup) {
-	rg.POST("/todos", t.newone)
-	rg.DELETE("/todos/:id", t.G.DeleteOne("ToDo"))
-	rg.PUT("/todos/:id", t.G.UpdateOne("ToDo"))
-	rg.GET("/todos/:id", t.G.GetOne("ToDo"))
+	rg.POST("/todos", middlewares.JWT(), t.newone)
+	rg.DELETE("/todos/:id", middlewares.JWT(), t.deleteone)
+	rg.PUT("/todos/:id", middlewares.JWT(), t.updateone)
 
 	rg.GET("/users/:id/todos", middlewares.JWT(), t.getallbyuserid)
 }
@@ -45,6 +42,60 @@ func (t *ToDoAPI) newone(c *gin.Context) {
 		"status":  200,
 		"message": " create success",
 		"data":    todo,
+	})
+}
+
+func (t *ToDoAPI) deleteone(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil || id < 0 {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"Convert id error": err,
+		})
+		return
+	}
+
+	if err := extensions.MySQL().Delete(&models.ToDo{}, id).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"Delete error": err,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "删除成功。",
+		"status":  "OK",
+	})
+}
+
+func (t *ToDoAPI) updateone(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	todo := models.ToDo{}
+
+	if err = extensions.MySQL().First(&todo, id).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	if err = c.ShouldBindJSON(&todo); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	extensions.MySQL().Save(&todo)
+
+	c.IndentedJSON(http.StatusOK, gin.H{
+		"status":  "OK",
+		"message": "更新成功",
 	})
 }
 

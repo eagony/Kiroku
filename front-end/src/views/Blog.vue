@@ -31,7 +31,7 @@
               </v-col>
               <v-col cols="12">
                 <v-textarea
-                class="ml-2"
+                  class="ml-2"
                   v-model="summary"
                   auto-grow
                   counter
@@ -73,12 +73,16 @@
           </v-card-title>
 
           <v-card-text>
-            <div
-              class="text-h6 font-weight-regular ml-1 mr-1"
-              style="min-height: 150px;"
+            <router-link
+              :to="{ name: 'BlogDetail', params: { id: blog.ID } }"
+              style="text-decoration: none;"
             >
-              {{ blog.summary }}
-            </div>
+              <div class="ml-1 mr-1" style="min-height: 150px;">
+                <h5 class="text-h6 font-weight-regular" style="color: black;">
+                  {{ blog.summary }}
+                </h5>
+              </div>
+            </router-link>
           </v-card-text>
           <v-divider></v-divider>
 
@@ -205,3 +209,12 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+a {
+  text-decoraction: none;
+}
+.router-link-active {
+  text-decoration: none;
+}
+</style>

@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"crypto/md5"
 	"crypto/sha256"
 	"encoding/hex"
 	"io"
@@ -9,6 +10,14 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 )
+
+// MD5FileName 对文件名进行hash
+func MD5FileName(name string) string {
+	m := md5.New()
+	m.Write([]byte(name))
+
+	return hex.EncodeToString(m.Sum(nil))
+}
 
 // FileHash 计算文件hash
 func FileHash(file *os.File) (hashValue string) {
@@ -20,7 +29,7 @@ func FileHash(file *os.File) (hashValue string) {
 		sum := hash.Sum(nil)
 		hashValue = hex.EncodeToString(sum)
 	}
-	return hashValue
+	return
 }
 
 // EncryptPassword 密码加密

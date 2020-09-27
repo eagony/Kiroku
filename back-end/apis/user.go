@@ -12,15 +12,69 @@ import (
 )
 
 // UserAPI 用户API
-type UserAPI struct {
-	G GeneralAPI
-}
+type UserAPI struct{}
 
 // Register ...
 func (u *UserAPI) Register(rg *gin.RouterGroup) {
 	rg.POST("/users/register", u.register)
 	rg.POST("/users/login", u.login)
+	rg.GET("/users/:id", u.getone)
+	rg.PUT("/users/:id", u.updateone)
+}
 
+func (u *UserAPI) getone(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"Convert id error": err.Error(),
+		})
+		return
+	}
+
+	user := models.User{}
+	if err = extensions.MySQL().Where("id = ?", id).Find(&user).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"Query error": err.Error(),
+		})
+		return
+	}
+	c.IndentedJSON(http.StatusOK, gin.H{
+		"status":  "OK",
+		"message": "success",
+		"data":    user,
+	})
+}
+
+func (u *UserAPI) updateone(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	user := models.User{}
+
+	if err = extensions.MySQL().First(&user, id).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	if err = c.ShouldBindJSON(&user); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	extensions.MySQL().Save(&user)
+
+	c.IndentedJSON(http.StatusOK, gin.H{
+		"status":  "OK",
+		"message": "资料更新成功",
+	})
 }
 
 func (u *UserAPI) register(c *gin.Context) {

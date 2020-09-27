@@ -78,24 +78,19 @@ export default {
   },
 
   methods: {
-    a() {
-      alert('淦');
-    },
     getToDoList() {
-      const path = `/users/${this.$store.state.user.id}/todos`;
       this.$axios({
         method: 'get',
-        url: path,
+        url: `/users/${this.$store.state.user.id}/todos`,
         headers: {
           Authorization: 'Bearer ' + window.localStorage.getItem('r-token')
         }
       })
         .then(res => {
-          console.log(res.data);
           this.tasks = res.data.data;
         })
         .catch(err => {
-          console.log(err);
+          console.log('todo->gettodolist->error: ', err);
         });
     },
     addTask() {
@@ -112,19 +107,17 @@ export default {
         }
       })
         .then(() => {
-          console.log('新建成功');
+          Toast.fire({
+            icon: 'success',
+            title: '新建成功，记得完成哦。'
+          });
+          this.task = null;
+          this.getToDoList();
         })
         .catch(err => {
-          console.log(err);
+          console.log('todo->addtask->error: ', err);
+          this.task = null;
         });
-      this.tasks.push({
-        done: false,
-        text: this.task,
-        user_id: this.$store.state.user.id
-      });
-
-      this.task = null;
-      this.getToDoList();
     },
     deleteTask(id) {
       this.$axios({
@@ -135,13 +128,10 @@ export default {
         }
       })
         .then(res => {
-          console.log(res);
-          if (res.status == 200) {
-            Toast.fire({
-              icon: 'success',
-              title: '删除成功。'
-            });
-          }
+          Toast.fire({
+            icon: 'success',
+            title: `${res.data.message}`
+          });
           this.getToDoList();
         })
         .catch(err => {

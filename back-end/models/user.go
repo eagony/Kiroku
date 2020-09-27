@@ -7,25 +7,18 @@ import (
 // User 用户模型
 type User struct {
 	gorm.Model
-	Username  string `json:"username"`
-	Password  string `json:"password"`
-	Role      string `json:"role"`
-	Email     string `json:"email"`
-	Phone     string `json:"phone"`
-	Avatar    string `json:"avatar"`
-	Signature string `json:"signature"`
+	Username  string `json:"username" gorm:"type:varchar(32)"`
+	Password  string `json:"password" gorm:"type:varchar(255)"`
+	Role      string `json:"role" gorm:"type:enum('user', 'admin'); default:'user'"`
+	Email     string `json:"email" gorm:"size:64"`
+	Phone     string `json:"phone" gorm:"size:16"`
+	Avatar    string `json:"avatar" gorm:"type:varchar(128)"`
+	Signature string `json:"signature" gorm:"type:varchar(255)"`
 
 	// 用户代办列表，一对多
-	ToDos []ToDo
+	ToDos []ToDo `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	// 用户日记列表，一对多
-	Diaries []Diary
-}
-
-func (u *User) String() string {
-	return ""
-}
-func init() {
-	RegisterSingleton("User", func() General {
-		return new(User)
-	})
+	Diaries []Diary `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	// 用户博客列表，一对多
+	Blogs []Blog `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }

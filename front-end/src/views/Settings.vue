@@ -9,7 +9,7 @@
                 <v-row justify="center" class="mb-8">
                   <v-avatar size="200" class="avatar">
                     <img
-                      src="https://firebasestorage.googleapis.com/v0/b/todoteam-3263d.appspot.com/o/images%2FC6ridYN4MZfCUIw8L6bDG6wX0U32?alt=media&token=423cba6a-cfc5-4241-859e-11341cc87e62"
+                      :src="user.avatar"
                       class="userAvatar"
                       @click="selectFile"
                     />
@@ -18,6 +18,7 @@
                 <input
                   type="file"
                   ref="uploadInput"
+                  name="image"
                   id="files"
                   accept="image/*"
                   :multiple="false"
@@ -26,7 +27,7 @@
                 <v-text-field
                   prepend-icon="person"
                   label="用户名"
-                  v-model="user.name"
+                  v-model="user.username"
                   color="primary"
                 ></v-text-field>
                 <v-textarea
@@ -48,7 +49,7 @@
                   v-model="user.phone"
                   color="primary"
                 ></v-text-field>
-                <v-text-field
+                <!-- <v-text-field
                   prepend-icon="lock"
                   type="password"
                   label="新密码"
@@ -61,7 +62,7 @@
                   label="确认新密码"
                   v-model="newPassword2"
                   color="primary"
-                ></v-text-field>
+                ></v-text-field> -->
               </v-form>
             </v-row>
           </v-card-text>
@@ -75,7 +76,7 @@
               @click="updateProfile()"
               :loading="loading"
               style="min-width:150px;"
-              >Save</v-btn
+              >更新</v-btn
             >
             <v-spacer></v-spacer>
           </v-card-actions>
@@ -86,28 +87,54 @@
 </template>
 
 <script>
+import Toast from '../plugins/toast';
+
 export default {
   name: 'Settings',
   data() {
     return {
       user: {},
-      newPassword: '',
-      newPassword2: '',
+      // newPassword: '',
+      // newPassword2: '',
       loading: false
     };
   },
 
   methods: {
+    getProfile() {
+      this.$axios({
+        method: 'get',
+        url: `/users/${this.$store.state.user.id}`,
+        headers: {
+          Authorization: 'Bearer ' + window.localStorage.getItem('r-token')
+        }
+      })
+        .then(res => {
+          this.user = res.data.data;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     updateProfile() {
       this.loading = true;
-
-      if (this.newPassword.length > 0 || this.newPassword2.length > 0) {
-        if (this.newPassword != this.newPassword2) {
-          this.loading = false;
-          this.snackbarMessage = 'Passwords do not match';
-          this.snackbar = true;
-        }
-      }
+      this.$axios({
+        method: 'put',
+        url: `/users/${this.$store.state.user.id}`,
+        headers: {
+          Authorization: 'Bearer ' + window.localStorage.getItem('r-token')
+        },
+        data: this.user
+      })
+        .then(res => {
+          Toast.fire({
+            icon: 'success',
+            title: res.data.message
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
 
     selectFile() {
@@ -123,9 +150,30 @@ export default {
     },
     upload(file) {
       console.log(file);
+      const formData = new FormData();
+      formData.append('image', file);
+      this.$axios({
+        method: 'post',
+        url: '/images',
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: 'Bearer ' + window.localStorage.getItem('r-token')
+        }
+      })
+        .then(res => {
+          console.log(res.data);
+          this.user.avatar = this.$axios.defaults.baseURL + '/' + res.data.uri;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      this.loading = false;
     }
   },
-  created() {}
+  created() {
+    this.getProfile();
+  }
 };
 </script>
 

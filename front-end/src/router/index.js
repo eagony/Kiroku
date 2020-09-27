@@ -63,7 +63,7 @@ const routes = [
     }
   },
   {
-    path: '/blogs/:id',
+    path: '/blog/:id',
     name: 'BlogDetail',
     component: BlogDetail,
     meta: {
