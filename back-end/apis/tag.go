@@ -3,8 +3,8 @@ package apis
 import (
 	"net/http"
 	"rinterest/extensions"
+	"rinterest/middlewares"
 	"rinterest/models"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,8 +14,9 @@ type TagAPI struct{}
 
 // Register ...
 func (t *TagAPI) Register(rg *gin.RouterGroup) {
+	// 后面限制管理员才能使用增加接口
 	rg.POST("/tags", t.newone)
-	rg.GET("/tags", t.getall)
+	rg.GET("/tags", middlewares.JWT(), t.getall)
 }
 
 func (t *TagAPI) newone(c *gin.Context) {
@@ -42,28 +43,30 @@ func (t *TagAPI) newone(c *gin.Context) {
 }
 
 func (t *TagAPI) getall(c *gin.Context) {
-	page, pageErr := strconv.Atoi(c.DefaultQuery("page", "1"))
-	if pageErr != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"Param error": pageErr.Error(),
-		})
-		return
-	}
+	// 暂时不分页
+	// page, pageErr := strconv.Atoi(c.DefaultQuery("page", "1"))
+	// if pageErr != nil {
+	// 	c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+	// 		"Param error": pageErr.Error(),
+	// 	})
+	// 	return
+	// }
 
-	perPage, perPageErr := strconv.Atoi(c.DefaultQuery("per_page", "10"))
-	if perPageErr != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"Query error": perPageErr.Error(),
-		})
-		return
-	}
+	// perPage, perPageErr := strconv.Atoi(c.DefaultQuery("per_page", "10"))
+	// if perPageErr != nil {
+	// 	c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+	// 		"Query error": perPageErr.Error(),
+	// 	})
+	// 	return
+	// }
 
-	var data []models.Tag
-	extensions.MySQL().Limit(perPage).Offset((page - 1) * perPage).Order("created_at desc").Find(&data)
-
+	useFor := c.DefaultQuery("use_for", "diary")
+	var tags []models.Tag
+	// extensions.MySQL().Limit(perPage).Offset((page - 1) * perPage).Order("created_at desc").Find(&data)
+	extensions.MySQL().Debug().Where("use_for = ?", useFor).Order("created_at desc").Find(&tags)
 	c.IndentedJSON(http.StatusOK, gin.H{
-		"status": "OK",
-		"data":   data,
-		"total":  len(data),
+		"status":  "OK",
+		"message": "success",
+		"data":    tags,
 	})
 }

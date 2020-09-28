@@ -48,6 +48,23 @@
                 <mavon-editor v-model="content"></mavon-editor>
               </v-col>
             </v-row>
+            <v-row class="ml-1 mt-5">
+              <span class="text-body-2 mr-5 mt-3">添加标签</span>
+
+              <v-chip-group
+                column
+                v-for="chip in chips"
+                :key="chip.ID"
+                multiple
+                v-model="tags"
+                active-class="teal--text text--accent-4"
+              >
+                <v-chip :value="chip"
+                  ><v-icon left>{{ chip.icon || 'mdi-label' }}</v-icon
+                  >{{ chip.text }}</v-chip
+                >
+              </v-chip-group>
+            </v-row>
           </v-card-text>
           <v-card-actions v-if="adding">
             <v-spacer></v-spacer>
@@ -134,6 +151,7 @@ export default {
       title: '',
       summary: '',
       content: '',
+      tags: [],
       // temp
       chips: []
     };
@@ -143,7 +161,7 @@ export default {
     getTags() {
       this.$axios({
         method: 'get',
-        url: `/tags`,
+        url: `/tags?use_for=blog`,
         headers: {
           Authorization: 'Bearer ' + window.localStorage.getItem('r-token')
         }

@@ -1,6 +1,7 @@
 package apis
 
 import (
+	"fmt"
 	"net/http"
 	"rinterest/extensions"
 	"rinterest/middlewares"
@@ -15,9 +16,9 @@ type DiaryAPI struct{}
 
 // Register ...
 func (d *DiaryAPI) Register(rg *gin.RouterGroup) {
-	rg.POST("/diaries", d.newone)
-	rg.GET("/diaries/:id", d.getone)
-	rg.DELETE("/diaries/:id", d.deleteone)
+	rg.POST("/diaries", middlewares.JWT(), d.newone)
+	rg.GET("/diaries/:id", middlewares.JWT(), d.getone)
+	rg.DELETE("/diaries/:id", middlewares.JWT(), d.deleteone)
 
 	rg.GET("/users/:id/diaries", middlewares.JWT(), d.getallbyuserid)
 }
@@ -30,7 +31,7 @@ func (d *DiaryAPI) newone(c *gin.Context) {
 		})
 		return
 	}
-
+	fmt.Println(diary)
 	if err := extensions.MySQL().Create(&diary).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"Create error": err.Error(),
@@ -78,9 +79,18 @@ func (d *DiaryAPI) getone(c *gin.Context) {
 	}
 
 	diary := models.Diary{}
-	if err = extensions.MySQL().Where("id = ?", id).Find(&diary).Error; err != nil {
+	if err = extensions.MySQL().Preload("Tags").Where("id = ?", id).Find(&diary).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"Query error": err.Error(),
+		})
+		return
+	}
+	currentUserID := middlewares.GetUserID()
+	defer middlewares.ResetUserID()
+	fmt.Println(currentUserID, diary.UserID)
+	if diary.UserID != currentUserID {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error": "偷看别人的日记是不好的哦！",
 		})
 		return
 	}
@@ -101,7 +111,7 @@ func (d *DiaryAPI) getallbyuserid(c *gin.Context) {
 	}
 
 	diaries := []models.Diary{}
-	if err = extensions.MySQL().Where("user_id = ?", id).Order("created_at desc").Find(&diaries).Error; err != nil {
+	if err = extensions.MySQL().Preload("Tags").Where("user_id = ?", id).Order("created_at desc").Find(&diaries).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"Query error": err.Error(),
 		})

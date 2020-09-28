@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"rinterest/middlewares"
 	"rinterest/utils"
 	"strings"
 	"time"
@@ -26,7 +27,7 @@ type ImageAPI struct{}
 
 // Register ...
 func (i *ImageAPI) Register(rg *gin.RouterGroup) {
-	rg.POST("/images", i.upload)
+	rg.POST("/images", middlewares.JWT(), i.upload)
 }
 
 func (i *ImageAPI) upload(c *gin.Context) {

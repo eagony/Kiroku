@@ -3,6 +3,7 @@ package apis
 import (
 	"net/http"
 	"rinterest/extensions"
+	"rinterest/middlewares"
 	"rinterest/models"
 	"strconv"
 
@@ -14,11 +15,11 @@ type BlogAPI struct{}
 
 // Register ...
 func (b *BlogAPI) Register(rg *gin.RouterGroup) {
-	rg.POST("/blogs", b.newone)
-	rg.GET("/blogs/:id", b.getone)
+	rg.POST("/blogs", middlewares.JWT(), b.newone)
+	rg.GET("/blogs/:id", middlewares.JWT(), b.getone)
 	rg.GET("/publicblogs", b.getpublic)
 
-	rg.GET("/users/:id/blogs", b.getallbyuserid)
+	rg.GET("/users/:id/blogs", middlewares.JWT(), b.getallbyuserid)
 }
 
 func (b *BlogAPI) newone(c *gin.Context) {

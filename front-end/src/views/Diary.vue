@@ -24,15 +24,16 @@
               label="新增日记"
             ></v-textarea>
             <v-row class="ml-1">
+              <span class="text-body-2 mr-5 mt-3">添加标签</span>
               <v-chip-group
                 column
-                v-for="(chip, index) in chips"
+                v-for="chip in chips"
                 :key="chip.ID"
                 multiple
-                v-model="selectedChips"
+                v-model="tags"
                 active-class="teal--text text--accent-4"
               >
-                <v-chip :value="index"
+                <v-chip :value="chip"
                   ><v-icon left>{{ chip.icon || 'mdi-label' }}</v-icon
                   >{{ chip.text }}</v-chip
                 >
@@ -73,19 +74,19 @@
               {{ diary.content }}
             </div>
           </v-card-text>
-          <v-divider class="mt-6 mx-4"></v-divider>
+          <!-- <v-divider class="mt-6 mx-4"></v-divider> -->
           <v-card-actions>
             <v-row class="mx-1" justify="center" align="center">
               <v-chip
-                v-for="(tag, index) in diary.tags.split(';')"
-                :key="index"
+                v-for="tag in diary.Tags"
+                :key="tag.ID"
                 class="ma-2"
-                :color="tag.split(',')[2]"
+                :color="tag.color"
                 label
                 text-color="white"
               >
-                <v-icon left>{{ tag.split(',')[0] || 'mdi-label' }}</v-icon>
-                {{ tag.split(',')[1] }}
+                <v-icon left>{{ tag.icon || 'mdi-label' }}</v-icon>
+                {{ tag.text }}
               </v-chip>
             </v-row>
           </v-card-actions>
@@ -105,11 +106,10 @@ export default {
     date: moment().format('YYYY.MM.DD'),
     day: moment().format('dddd'),
     adding: false,
-    tags: '',
+    tags: [],
     content: '',
     chips: [],
-    diaries: [],
-    selectedChips: []
+    diaries: []
   }),
   methods: {
     getDay(date) {
@@ -172,20 +172,14 @@ export default {
         });
     },
     addDiary() {
-      for (var i = 0, len = this.selectedChips.length; i < len; i++) {
-        this.tags +=
-          this.chips[this.selectedChips[i]].icon +
-          ',' +
-          this.chips[this.selectedChips[i]].text +
-          ',' +
-          this.chips[this.selectedChips[i]].color +
-          ';';
-      }
+      // for (var i = 0, len = this.selectedChips.length; i < len; i++) {
+      //   this.tags.push( this.chips[this.selectedChips[i]])
+      // }
       this.$axios({
         method: 'post',
         url: '/diaries',
         data: {
-          tags: this.tags.slice(0, -1),
+          tags: this.tags,
           content: this.content,
           user_id: this.$store.state.user.id
         },
@@ -194,15 +188,19 @@ export default {
         }
       })
         .then(() => {
+          Toast.fire({
+            icon: 'success',
+            title: '新建日记成功'
+          });
           console.log('新建日记成功');
+          (this.tags = ''), (this.adding = false);
+          this.content = null;
+          this.selectedChips = [];
+          this.getDiaryList();
         })
         .catch(err => {
           console.log(err);
         });
-      (this.tags = ''), (this.adding = false);
-      this.content = null;
-      this.selectedChips = [];
-      this.getDiaryList();
     }
   },
   mounted() {
