@@ -39,7 +39,12 @@
       <v-list dense nav>
         <v-list-item two-line>
           <v-list-item-avatar>
-            <img src="https://randomuser.me/api/portraits/men/81.jpg" />
+            <img
+              :src="
+                this.$store.state.user.avatar ||
+                  'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
+              "
+            />
           </v-list-item-avatar>
 
           <v-list-item-content>
@@ -93,7 +98,7 @@ export default {
         { title: '日记', icon: 'mdi-book-open-blank-variant', route: '/diary' },
         { title: '博客', icon: 'mdi-post-outline', route: '/blog' },
         // { title: '文件', icon: 'mdi-file', route: '/file' },
-        { title: '管理', icon: 'mdi-chart-donut', route: '/admin' },
+        // { title: '管理', icon: 'mdi-chart-donut', route: '/admin' },
         { title: '设置', icon: 'mdi-cog-outline', route: '/settings' },
         { title: '关于', icon: 'mdi-help-box', route: '/about' }
       ]

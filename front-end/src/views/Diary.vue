@@ -78,7 +78,7 @@
           <v-card-actions>
             <v-row class="mx-1" justify="center" align="center">
               <v-chip
-                v-for="tag in diary.Tags"
+                v-for="tag in diary.tags"
                 :key="tag.ID"
                 class="ma-2"
                 :color="tag.color"
@@ -124,7 +124,6 @@ export default {
         }
       })
         .then(res => {
-          console.log(res.data);
           this.chips = res.data.data;
         })
         .catch(err => {
@@ -140,7 +139,6 @@ export default {
         }
       })
         .then(res => {
-          console.log(res.data);
           this.diaries = res.data.data;
         })
         .catch(err => {
@@ -159,7 +157,7 @@ export default {
           if (res.status == 200) {
             Toast.fire({
               icon: 'success',
-              title: '删除成功!'
+              title: '删除成功，回忆-1。'
             });
             this.getDiaryList();
           }
@@ -172,9 +170,6 @@ export default {
         });
     },
     addDiary() {
-      // for (var i = 0, len = this.selectedChips.length; i < len; i++) {
-      //   this.tags.push( this.chips[this.selectedChips[i]])
-      // }
       this.$axios({
         method: 'post',
         url: '/diaries',
@@ -190,10 +185,10 @@ export default {
         .then(() => {
           Toast.fire({
             icon: 'success',
-            title: '新建日记成功'
+            title: '新增成功，回忆+1。'
           });
-          console.log('新建日记成功');
-          (this.tags = ''), (this.adding = false);
+          this.adding = false;
+          this.tags = '';
           this.content = null;
           this.selectedChips = [];
           this.getDiaryList();

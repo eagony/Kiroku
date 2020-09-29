@@ -63,7 +63,7 @@ func (t *TagAPI) getall(c *gin.Context) {
 	useFor := c.DefaultQuery("use_for", "diary")
 	var tags []models.Tag
 	// extensions.MySQL().Limit(perPage).Offset((page - 1) * perPage).Order("created_at desc").Find(&data)
-	extensions.MySQL().Debug().Where("use_for = ?", useFor).Order("created_at desc").Find(&tags)
+	extensions.MySQL().Where("use_for = ?", useFor).Order("created_at desc").Find(&tags)
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  "OK",
 		"message": "success",

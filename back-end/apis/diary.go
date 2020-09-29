@@ -31,7 +31,6 @@ func (d *DiaryAPI) newone(c *gin.Context) {
 		})
 		return
 	}
-	fmt.Println(diary)
 	if err := extensions.MySQL().Create(&diary).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"Create error": err.Error(),

@@ -2,3 +2,4 @@
 /front-end/yarn-error.log
 
 /back-end/data/*
+/back-end/.env

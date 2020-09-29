@@ -18,6 +18,7 @@ func (b *BlogAPI) Register(rg *gin.RouterGroup) {
 	rg.POST("/blogs", middlewares.JWT(), b.newone)
 	rg.GET("/blogs/:id", middlewares.JWT(), b.getone)
 	rg.GET("/publicblogs", b.getpublic)
+	rg.DELETE("/blogs/:id", middlewares.JWT(), b.deleteone)
 
 	rg.GET("/users/:id/blogs", middlewares.JWT(), b.getallbyuserid)
 }
@@ -68,6 +69,27 @@ func (b *BlogAPI) getone(c *gin.Context) {
 	})
 }
 
+func (b *BlogAPI) deleteone(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil || id < 0 {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	if err := extensions.MySQL().Delete(&models.Blog{}, id).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err,
+		})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, gin.H{
+		"status": "OK",
+	})
+}
+
 func (b *BlogAPI) getallbyuserid(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -78,7 +100,7 @@ func (b *BlogAPI) getallbyuserid(c *gin.Context) {
 	}
 
 	bloges := []models.Blog{}
-	if err = extensions.MySQL().Where("user_id = ?", id).Order("created_at desc").Find(&bloges).Error; err != nil {
+	if err = extensions.MySQL().Preload("Tags").Where("user_id = ?", id).Order("created_at desc").Find(&bloges).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"Query error": err.Error(),
 		})

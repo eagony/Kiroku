@@ -35,6 +35,7 @@ func main() {
 	new(apis.DiaryAPI).Register(apiV1)
 	new(apis.BlogAPI).Register(apiV1)
 	new(apis.ImageAPI).Register(apiV1)
+	new(apis.StatisticAPI).Register(apiV1)
 
 	port := os.Getenv("PORT")
 

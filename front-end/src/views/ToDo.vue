@@ -130,7 +130,7 @@ export default {
         .then(res => {
           Toast.fire({
             icon: 'success',
-            title: `${res.data.message}`
+            title: `${res.data.message}!`
           });
           this.getToDoList();
         })
@@ -156,15 +156,16 @@ export default {
         }
       })
         .then(() => {
-          console.log('更新成功');
+          Toast.fire({
+            icon: 'success',
+            title: task.done
+              ? '真胖，完成了一个任务！'
+              : '真胖，又多出来了一个任务！'
+          });
         })
         .catch(err => {
           console.log(err);
         });
-      Toast.fire({
-        icon: 'success',
-        title: 'Good job！'
-      });
     }
   },
   mounted() {

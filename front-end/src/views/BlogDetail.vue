@@ -15,11 +15,27 @@
         >
         </vue-markdown>
       </v-card-text>
+      <v-card-actions>
+        <v-row justify="center" align="center">
+          <v-btn
+            fab
+            dark
+            small
+            color="pink"
+            @click="blogLikesPlus"
+          >
+            <v-icon dark>
+              mdi-heart
+            </v-icon>
+          </v-btn>
+        </v-row>
+      </v-card-actions>
     </v-card>
   </v-container>
 </template>
 
 <script>
+import Toast from '../plugins/toast';
 import VueMarkdown from 'vue-markdown';
 import hljs from 'highlight.js';
 const highlightCode = () => {
@@ -58,10 +74,26 @@ export default {
         .catch(err => {
           console.log(err);
         });
+    },
+    blogViewsPlus() {
+      this.$axios.get(`/statistic/blogs/${this.$route.params.id}/views`).catch(err => {
+        console.log(err)
+      })
+    },
+    blogLikesPlus() {
+            this.$axios.get(`/statistic/blogs/${this.$route.params.id}/likes`).then(() => {
+              Toast.fire({
+                icon: 'success',
+                title: '作者已收到你的赞。'
+              })
+            }).catch(err => {
+        console.log(err)
+      })
     }
   },
-  mounted() {
+  created() {
     this.getBlog();
+    this.blogViewsPlus();
     highlightCode();
   },
   updated() {
