@@ -2,7 +2,6 @@ package apis
 
 import (
 	"net/http"
-	"rinterest/extensions"
 	"rinterest/middlewares"
 	"rinterest/models"
 	"strconv"
@@ -32,7 +31,7 @@ func (b *BlogAPI) newone(c *gin.Context) {
 		return
 	}
 
-	if err := extensions.MySQL().Create(&blog).Error; err != nil {
+	if err := myDB.Create(&blog).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"Create error": err.Error(),
 		})
@@ -56,7 +55,7 @@ func (b *BlogAPI) getone(c *gin.Context) {
 	}
 
 	blog := models.Blog{}
-	if err = extensions.MySQL().Where("id = ?", id).Find(&blog).Error; err != nil {
+	if err = myDB.Where("id = ?", id).Find(&blog).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"Query error": err.Error(),
 		})
@@ -78,7 +77,7 @@ func (b *BlogAPI) deleteone(c *gin.Context) {
 		return
 	}
 
-	if err := extensions.MySQL().Delete(&models.Blog{}, id).Error; err != nil {
+	if err := myDB.Delete(&models.Blog{}, id).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err,
 		})
@@ -100,7 +99,7 @@ func (b *BlogAPI) getallbyuserid(c *gin.Context) {
 	}
 
 	bloges := []models.Blog{}
-	if err = extensions.MySQL().Preload("Tags").Where("user_id = ?", id).Order("created_at desc").Find(&bloges).Error; err != nil {
+	if err = myDB.Preload("Tags").Where("user_id = ?", id).Order("created_at desc").Find(&bloges).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"Query error": err.Error(),
 		})
@@ -115,7 +114,7 @@ func (b *BlogAPI) getallbyuserid(c *gin.Context) {
 
 func (b *BlogAPI) getpublic(c *gin.Context) {
 	bloges := []models.Blog{}
-	if err := extensions.MySQL().Where("invisibility = ?", "public").Order("created_at desc").Find(&bloges).Error; err != nil {
+	if err := myDB.Preload("Tags").Where("invisibility = ?", "public").Order("created_at desc").Find(&bloges).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"Query error": err.Error(),
 		})

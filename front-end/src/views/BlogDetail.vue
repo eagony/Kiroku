@@ -17,13 +17,7 @@
       </v-card-text>
       <v-card-actions>
         <v-row justify="center" align="center">
-          <v-btn
-            fab
-            dark
-            small
-            color="pink"
-            @click="blogLikesPlus"
-          >
+          <v-btn fab dark small color="pink" @click="blogLikesPlus">
             <v-icon dark>
               mdi-heart
             </v-icon>
@@ -76,19 +70,24 @@ export default {
         });
     },
     blogViewsPlus() {
-      this.$axios.get(`/statistic/blogs/${this.$route.params.id}/views`).catch(err => {
-        console.log(err)
-      })
+      this.$axios
+        .get(`/statistic/blogs/${this.$route.params.id}/views`)
+        .catch(err => {
+          console.log(err);
+        });
     },
     blogLikesPlus() {
-            this.$axios.get(`/statistic/blogs/${this.$route.params.id}/likes`).then(() => {
-              Toast.fire({
-                icon: 'success',
-                title: '作者已收到你的赞。'
-              })
-            }).catch(err => {
-        console.log(err)
-      })
+      this.$axios
+        .get(`/statistic/blogs/${this.$route.params.id}/likes`)
+        .then(() => {
+          Toast.fire({
+            icon: 'success',
+            title: '作者已收到你的赞。'
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
   },
   created() {

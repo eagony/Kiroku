@@ -2,7 +2,6 @@ package apis
 
 import (
 	"net/http"
-	"rinterest/extensions"
 	"rinterest/models"
 	"strconv"
 
@@ -27,14 +26,14 @@ func (s *StatisticAPI) blogviewsplus(c *gin.Context) {
 		return
 	}
 	blog := models.Blog{}
-	if err := extensions.MySQL().First(&blog, id).Error; err != nil {
+	if err := myDB.First(&blog, id).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err,
 		})
 		return
 	}
 	blog.Views++
-	extensions.MySQL().Save(&blog)
+	myDB.Save(&blog)
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status": "OK",
 	})
@@ -49,14 +48,14 @@ func (s *StatisticAPI) bloglikesplus(c *gin.Context) {
 		return
 	}
 	blog := models.Blog{}
-	if err := extensions.MySQL().First(&blog, id).Error; err != nil {
+	if err := myDB.First(&blog, id).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err,
 		})
 		return
 	}
 	blog.Likes++
-	extensions.MySQL().Save(&blog)
+	myDB.Save(&blog)
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status": "OK",
 	})

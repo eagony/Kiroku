@@ -41,6 +41,13 @@
             </v-row>
           </v-card-text>
           <v-card-actions v-if="adding">
+            <!-- 是否公开， 默认否 -->
+            <v-switch
+              class="ml-3"
+              v-model="isPublic"
+              inset
+              label="公开"
+            ></v-switch>
             <v-spacer></v-spacer>
             <v-btn
               class="white--text"
@@ -108,6 +115,7 @@ export default {
     adding: false,
     tags: [],
     content: '',
+    isPublic: false,
     chips: [],
     diaries: []
   }),
@@ -176,6 +184,7 @@ export default {
         data: {
           tags: this.tags,
           content: this.content,
+          invisibility: this.isPublic ? 'public' : 'private',
           user_id: this.$store.state.user.id
         },
         headers: {

@@ -127,10 +127,10 @@ export default {
           Authorization: 'Bearer ' + window.localStorage.getItem('r-token')
         }
       })
-        .then(res => {
+        .then(() => {
           Toast.fire({
             icon: 'success',
-            title: `${res.data.message}!`
+            title: `删除成功。`
           });
           this.getToDoList();
         })

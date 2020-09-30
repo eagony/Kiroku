@@ -1,6 +1,7 @@
 <template>
   <v-container>
     <v-row dense>
+      <!-- 编辑栏 -->
       <v-col cols="12">
         <!-- 提示栏 -->
         <v-card>
@@ -50,7 +51,11 @@
                 </div>
               </v-col>
               <v-col cols="12">
-                <mavon-editor ref=md v-model="content" @imgAdd="$imgAdd"></mavon-editor>
+                <mavon-editor
+                  ref="md"
+                  v-model="content"
+                  @imgAdd="$imgAdd"
+                ></mavon-editor>
               </v-col>
             </v-row>
             <!-- 标签 -->
@@ -100,10 +105,11 @@
     <v-row>
       <v-col cols="12" v-for="blog in blogs" :key="blog.ID">
         <v-card class="">
+          <!-- 标题 -->
           <v-card-title class="d-flex justify-center">
             <span class="title font-weight-regular">{{ blog.title }}</span>
           </v-card-title>
-
+          <!-- 摘要 -->
           <v-card-text>
             <router-link
               :to="{ name: 'BlogDetail', params: { id: blog.ID } }"
@@ -119,6 +125,7 @@
 
           <v-divider></v-divider>
 
+          <!-- 标签 -->
           <v-card-text v-if="blog.tags.length > 0">
             <v-row justify="center" align="center">
               <v-chip
@@ -134,18 +141,36 @@
               </v-chip>
             </v-row>
           </v-card-text>
+          <!-- 数据和操作 -->
           <v-card-actions>
             <v-row class="pt-3 pb-3" justify="center" align="center">
+              <!-- 浏览量 -->
               <v-icon class="mr-2">mdi-eye-outline</v-icon>
               <span class="subheading">{{ blog.views }}</span>
+
               <v-divider vertical class="ml-5 mr-5"></v-divider>
+
+              <!-- 点赞数 -->
               <v-icon class="mr-2">mdi-heart-outline</v-icon>
               <span class="subheading">{{ blog.likes }}</span>
+
               <v-divider vertical class="ml-5 mr-5"></v-divider>
+
+              <!-- 评论数 -->
               <v-icon class="mr-2">mdi-comment-outline</v-icon>
               <span class="subheading">45</span>
+
               <v-divider vertical class="ml-5 mr-5"></v-divider>
-              <v-icon @click="deleteBlog(blog.ID)">mdi-trash-can-outline</v-icon>
+
+              <!-- 编辑 -->
+              <v-icon @click="editBlog(blog)">mdi-circle-edit-outline</v-icon>
+
+              <v-divider vertical class="ml-5 mr-5"></v-divider>
+
+              <!-- 删除 -->
+              <v-icon @click="deleteBlog(blog.ID)"
+                >mdi-trash-can-outline</v-icon
+              >
             </v-row>
           </v-card-actions>
         </v-card>
@@ -155,25 +180,25 @@
 </template>
 
 <script>
+import Swal from 'sweetalert2';
 import Toast from '../plugins/toast';
 
 export default {
   name: 'Blog',
   data() {
     return {
+      tags: [],
+      chips: [],
       blogs: [],
-      adding: false,
       title: '',
       summary: '',
       content: '',
-      tags: [],
-      isPublic: true,
-      // temp
-      chips: []
+      adding: false,
+      isPublic: true
     };
   },
   methods: {
-    // temp
+    // 获取博客可选的标签
     getTags() {
       this.$axios({
         method: 'get',
@@ -183,13 +208,13 @@ export default {
         }
       })
         .then(res => {
-          console.log(res.data);
           this.chips = res.data.data;
         })
         .catch(err => {
-          console.log(err);
+          console.log('error on Blog.getTags: ', err);
         });
     },
+    // 获取用户博客列表
     getBlogList() {
       this.$axios({
         method: 'get',
@@ -202,10 +227,15 @@ export default {
           this.blogs = res.data.data;
         })
         .catch(err => {
-          console.log(err);
+          console.log('error on Blog.getBlogList: ', err);
         });
     },
+    // 添加博客
     addBlog() {
+      if (this.content.length < 1) {
+        alert('必须写点什么吧。');
+        return;
+      }
       this.$axios({
         method: 'post',
         url: '/blogs',
@@ -224,8 +254,7 @@ export default {
         .then(() => {
           Toast.fire({
             icon: 'success',
-            title: '成功！',
-            text: '成功新建一篇博客。'
+            title: '成功新建一篇博客。'
           });
           this.adding = false;
           this.title = '';
@@ -235,48 +264,74 @@ export default {
           this.getBlogList();
         })
         .catch(err => {
-          console.log(err);
+          console.log('error on Blog.addBlog: ', err);
         });
     },
+    // 编辑博客
+    editBlog(blog) {
+      console.log(blog);
+    },
+    // 删除博客
     deleteBlog(id) {
+      Swal.fire({
+        title: '确定要删除这篇博客吗？',
+        text: '此操作不可逆，删除的博客无法找回哦!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '删除',
+        cancelButtonText: '取消'
+      }).then(result => {
+        // 确认删除
+        if (result.isConfirmed) {
+          this.$axios({
+            method: 'delete',
+            url: `/blogs/${id}`,
+            headers: {
+              Authorization: 'Bearer ' + window.localStorage.getItem('r-token')
+            }
+          })
+            .then(() => {
+              Swal.fire('删除成功!', '你刚刚删除了一篇博客。', 'success');
+              this.getBlogList();
+            })
+            .catch(err => {
+              Toast.fire({
+                icon: 'error',
+                title: `删除失败，错误：${err}`
+              });
+            });
+        } else if (
+          // 取消删除
+          result.dismiss === Swal.DismissReason.cancel
+        ) {
+          Swal.fire('已取消', '你的博客还健在 :)', 'error');
+        }
+      });
+    },
+    // 绑定@imgAdd event
+    $imgAdd(pos, $file) {
+      // 第一步.将图片上传到服务器.
+      var formdata = new FormData();
+      formdata.append('image', $file);
       this.$axios({
-        method: 'delete',
-        url: `/blogs/${id}`,
-                headers: {
+        url: '/images',
+        method: 'post',
+        data: formdata,
+        headers: {
+          'Content-Type': 'multipart/form-data',
           Authorization: 'Bearer ' + window.localStorage.getItem('r-token')
         }
       }).then(res => {
-        Toast.fire({
-          icon: 'success',
-          title: `${res.data.message}`
-        })
-        this.getBlogList()
-      }).catch(err => {
-        Toast.fire({
-          icon: 'error',
-          title: `删除失败，错误：${err}`
-        })
-      })
-    },
-        // 绑定@imgAdd event
-        $imgAdd(pos, $file){
-            // 第一步.将图片上传到服务器.
-           var formdata = new FormData();
-           formdata.append('image', $file);
-           this.$axios({
-               url: '/images',
-               method: 'post',
-               data: formdata,
-               headers: { 
-                 'Content-Type': 'multipart/form-data',
-                 Authorization: 'Bearer ' + window.localStorage.getItem('r-token')
-              },
-           }).then(res => {
-               // 第二步.将返回的url替换到文本原位置![...](0) -> ![...](url)
-               // $vm.$img2Url 详情见本页末尾
-               this.$refs.md.$img2Url(pos, this.$axios.defaults.baseURL + '/' + res.data.uri);
-           })
-        }
+        // 第二步.将返回的url替换到文本原位置![...](0) -> ![...](url)
+        // $vm.$img2Url 详情见本页末尾
+        this.$refs.md.$img2Url(
+          pos,
+          this.$axios.defaults.baseURL + '/' + res.data.uri
+        );
+      });
+    }
   },
   mounted() {
     this.getBlogList();

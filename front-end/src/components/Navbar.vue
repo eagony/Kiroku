@@ -35,8 +35,8 @@
     </v-app-bar>
 
     <!-- 导航抽屉 -->
-    <v-navigation-drawer v-model="drawer" app dark color="teal">
-      <v-list dense nav>
+    <v-navigation-drawer  v-model="drawer" app dark color="teal">
+      <v-list dense nav >
         <v-list-item two-line>
           <v-list-item-avatar>
             <img
@@ -49,7 +49,7 @@
 
           <v-list-item-content>
             <v-list-item-title>{{
-              this.$store.state.user.username
+              this.$store.state.user.username || '未登录'
             }}</v-list-item-title>
             <v-list-item-subtitle>{{
               this.$store.state.user.signature
@@ -76,9 +76,14 @@
         </v-list-item>
       </v-list>
 
-      <template v-slot:append>
+      <template v-slot:append v-if="this.$store.getters.isLoggedIn">
         <div class="pa-2">
           <v-btn block @click="doLogout">注销登录</v-btn>
+        </div>
+      </template>
+      <template v-slot:append v-else>
+                <div class="pa-2">
+          <v-btn block @click="goLogin">前往登录</v-btn>
         </div>
       </template>
     </v-navigation-drawer>
@@ -114,6 +119,9 @@ export default {
       this.$store.commit('logout');
       window.localStorage.removeItem('r-token');
       this.$router.push('/login');
+    },
+    goLogin() {
+      this.$router.push('/login')
     }
   }
 };

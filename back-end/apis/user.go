@@ -32,7 +32,7 @@ func (u *UserAPI) getone(c *gin.Context) {
 	}
 
 	user := models.User{}
-	if err = extensions.MySQL().Where("id = ?", id).Find(&user).Error; err != nil {
+	if err = myDB.Where("id = ?", id).Find(&user).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"Query error": err.Error(),
 		})
@@ -55,7 +55,7 @@ func (u *UserAPI) updateone(c *gin.Context) {
 	}
 	user := models.User{}
 
-	if err = extensions.MySQL().First(&user, id).Error; err != nil {
+	if err = myDB.First(&user, id).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
@@ -69,11 +69,11 @@ func (u *UserAPI) updateone(c *gin.Context) {
 		return
 	}
 
-	extensions.MySQL().Save(&user)
+	myDB.Save(&user)
 
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  "OK",
-		"message": "资料更新成功",
+		"message": "资料更新成功。",
 	})
 }
 
@@ -88,7 +88,7 @@ func (u *UserAPI) register(c *gin.Context) {
 	// 密码加密
 	user.Password = utils.EncryptPassword([]byte(user.Password))
 
-	if err := extensions.MySQL().Create(&user).Error; err != nil {
+	if err := myDB.Create(&user).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"Create error": err.Error(),
 		})
@@ -144,6 +144,8 @@ func (u *UserAPI) login(c *gin.Context) {
 	})
 }
 
+// 批量查询用户的一对多模型
+
 func (u *UserAPI) todolist(c *gin.Context) {
 	userID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -175,7 +177,7 @@ func (u *UserAPI) diarylist(c *gin.Context) {
 
 	user := models.User{}
 
-	extensions.MySQL().Order("created_at desc").Preload("Diaries").Where("id = ?", userID).Find(&user)
+	myDB.Order("created_at desc").Preload("Diaries").Where("id = ?", userID).Find(&user)
 
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  "OK",

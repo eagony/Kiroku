@@ -67,8 +67,9 @@ const routes = [
     name: 'BlogDetail',
     component: BlogDetail,
     meta: {
-      requireLogin: true,
-      requireAdmin: false
+      requireLogin: false,
+      requireAdmin: false,
+      isPublic: true
     }
   },
   {
@@ -85,8 +86,9 @@ const routes = [
     name: 'Square',
     component: Square,
     meta: {
-      requireLogin: true,
-      requireAdmin: false
+      requireLogin: false,
+      requireAdmin: false,
+      isPublic: true
     }
   },
   {
@@ -147,7 +149,7 @@ router.beforeEach((to, from, next) => {
     next({
       path: '/login'
     });
-  } else if (store.getters.isLoggedIn && !to.meta.requireLogin) {
+  } else if (store.getters.isLoggedIn && !to.meta.requireLogin && !to.meta.isPublic) {
     // 2.用户已登录，但又去访问 登录/注册/请求重置密码/重置密码 页面时不让他过去
     Swal.fire({
       position: 'top',

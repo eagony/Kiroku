@@ -1,49 +1,47 @@
 <template>
   <v-container>
     <v-row dense>
-      <v-col cols="12" v-for="blog in blogs" :key="blog.ID">
-        <v-card class="">
-          <v-card-title class="d-flex justify-center">
-            <span class="title font-weight-regular">{{ blog.title }}</span>
+      <v-col cols="12">
+        <!-- 提示栏 -->
+        <v-card>
+          <v-card-title>
+            <div class="text-justify text--black">
+              共 {{ blogs.length }} 篇公开博客
+            </div>
+            <v-spacer></v-spacer>
+            <div>
+              <v-btn class="mx-2" fab dark color="teal">
+                <v-icon dark>mdi-refresh</v-icon>
+              </v-btn>
+            </div>
           </v-card-title>
-
-          <v-card-text class="headline font-weight-normal">
-            一些摘要一些摘要一些摘要一些摘要一些摘要一些摘要一些摘要一些摘要一些摘要一些摘要一些摘要一些摘要一些摘要一些摘要一些摘要一些摘要一些摘要一些摘要一些摘要一些摘要
-          </v-card-text>
-
-          <v-card-actions>
-            <v-list-item class="grow">
-              <v-list-item-avatar color="grey darken-3">
-                <v-img
-                  class="elevation-6"
-                  src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
-                ></v-img>
-              </v-list-item-avatar>
-
-              <v-list-item-content>
-                <v-list-item-title>Evan You</v-list-item-title>
-              </v-list-item-content>
-
-              <v-row align="center" justify="end">
-                <v-icon class="mr-1">mdi-eye-outline</v-icon>
-                <span class="subheading mr-2">256</span>
-
-                <v-icon class="mr-1">mdi-heart-outline</v-icon>
-                <span class="subheading mr-2">45</span>
-                <v-icon class="mr-1">mdi-comment-outline</v-icon>
-                <span class="subheading">45</span>
-              </v-row>
-            </v-list-item>
-          </v-card-actions>
         </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- 博客列表 -->
+    <v-row>
+      <v-col cols="12" v-for="blog in blogs" :key="blog.ID">
+        <PublicBlogPreviewCard
+          :id="blog.ID"
+          :title="blog.title"
+          :summary="blog.summary"
+          :tags="blog.tags"
+          :views="blog.views"
+          :likes="blog.likes"
+        ></PublicBlogPreviewCard>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
+import PublicBlogPreviewCard from '../components/PublicBlogPreviewCard';
 export default {
   name: 'Square',
+  components: {
+    PublicBlogPreviewCard
+  },
   data() {
     return {
       blogs: []

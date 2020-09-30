@@ -2,7 +2,6 @@ package apis
 
 import (
 	"net/http"
-	"rinterest/extensions"
 	"rinterest/middlewares"
 	"rinterest/models"
 
@@ -28,7 +27,7 @@ func (t *TagAPI) newone(c *gin.Context) {
 		return
 	}
 
-	if err := extensions.MySQL().Create(&tag).Error; err != nil {
+	if err := myDB.Create(&tag).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"Create error": err.Error(),
 		})
@@ -63,7 +62,7 @@ func (t *TagAPI) getall(c *gin.Context) {
 	useFor := c.DefaultQuery("use_for", "diary")
 	var tags []models.Tag
 	// extensions.MySQL().Limit(perPage).Offset((page - 1) * perPage).Order("created_at desc").Find(&data)
-	extensions.MySQL().Where("use_for = ?", useFor).Order("created_at desc").Find(&tags)
+	myDB.Where("use_for = ?", useFor).Order("created_at desc").Find(&tags)
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  "OK",
 		"message": "success",

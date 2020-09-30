@@ -1,6 +1,6 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import "gorm.io/gorm"
 
 // Diary 日记模型
 type Diary struct {

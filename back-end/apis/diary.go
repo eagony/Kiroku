@@ -3,7 +3,6 @@ package apis
 import (
 	"fmt"
 	"net/http"
-	"rinterest/extensions"
 	"rinterest/middlewares"
 	"rinterest/models"
 	"strconv"
@@ -31,7 +30,7 @@ func (d *DiaryAPI) newone(c *gin.Context) {
 		})
 		return
 	}
-	if err := extensions.MySQL().Create(&diary).Error; err != nil {
+	if err := myDB.Create(&diary).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"Create error": err.Error(),
 		})
@@ -54,7 +53,7 @@ func (d *DiaryAPI) deleteone(c *gin.Context) {
 		return
 	}
 
-	if err := extensions.MySQL().Delete(&models.Diary{}, id).Error; err != nil {
+	if err := myDB.Delete(&models.Diary{}, id).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"Delete error": err,
 		})
@@ -78,7 +77,7 @@ func (d *DiaryAPI) getone(c *gin.Context) {
 	}
 
 	diary := models.Diary{}
-	if err = extensions.MySQL().Preload("Tags").Where("id = ?", id).Find(&diary).Error; err != nil {
+	if err = myDB.Preload("Tags").Where("id = ?", id).Find(&diary).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"Query error": err.Error(),
 		})
@@ -110,7 +109,7 @@ func (d *DiaryAPI) getallbyuserid(c *gin.Context) {
 	}
 
 	diaries := []models.Diary{}
-	if err = extensions.MySQL().Preload("Tags").Where("user_id = ?", id).Order("created_at desc").Find(&diaries).Error; err != nil {
+	if err = myDB.Preload("Tags").Where("user_id = ?", id).Order("created_at desc").Find(&diaries).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"Query error": err.Error(),
 		})

@@ -5,7 +5,7 @@
         <v-card class="elevation-12">
           <v-img src="../assets/cover1.jpg" max-height="250"></v-img>
           <v-toolbar class="pt-3" color="white" light flat>
-            <v-toolbar-title>登陆到Rinterest</v-toolbar-title>
+            <v-toolbar-title>登陆到 <strong>Kiroku</strong></v-toolbar-title>
             <v-spacer></v-spacer>
             <v-btn text large @click="goRegister">注册</v-btn>
           </v-toolbar>
@@ -30,7 +30,7 @@
             </v-form>
           </v-card-text>
           <v-card-actions>
-            <v-btn block color="teal" @click="doLogin">登陆</v-btn>
+            <v-btn block dark color="teal" @click="doLogin">登陆</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -39,6 +39,8 @@
 </template>
 
 <script>
+import Toast from '../plugins/toast';
+
 export default {
   name: 'Login',
   props: {
@@ -62,8 +64,11 @@ export default {
           window.localStorage.setItem('r-token', res.data.data);
           let user = JSON.parse(atob(res.data.data.split('.')[1]));
           this.$store.commit('login', user);
-          console.log(user);
           this.$router.push('/');
+          Toast.fire({
+            icon: 'success',
+            title: '登录成功，开始美好一天。'
+          });
         })
         .catch(err => {
           alert(err);

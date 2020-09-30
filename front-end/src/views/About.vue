@@ -1,5 +1,28 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
-  </div>
+  <v-container>
+    <v-row dense>
+      <v-col cols="12">
+        <v-card>
+          <v-card-text>
+            <v-row align="center" justify="center">
+              <div class="text-justify font-weight-black">
+                就是想加个关于页面
+              </div>
+            </v-row>
+            <v-row align="center" justify="center">
+              <div class="text-justify text-h6 font-weight-black">
+                但是又不知道写点儿啥
+              </div>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
+
+<script>
+export default {
+  name: 'About'
+};
+</script>

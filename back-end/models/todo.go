@@ -1,8 +1,6 @@
 package models
 
-import (
-	"github.com/jinzhu/gorm"
-)
+import "gorm.io/gorm"
 
 // ToDo 代办模型
 type ToDo struct {

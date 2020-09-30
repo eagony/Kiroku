@@ -73,7 +73,7 @@
               class="mb-3 mr-3"
               color="teal"
               large
-              @click="updateProfile()"
+              @click="updateProfile('资料修改成功。')"
               :loading="loading"
               style="min-width:150px;"
               >更新</v-btn
@@ -101,6 +101,7 @@ export default {
   },
 
   methods: {
+    // 获取用户个人信息
     getProfile() {
       this.$axios({
         method: 'get',
@@ -113,10 +114,11 @@ export default {
           this.user = res.data.data;
         })
         .catch(err => {
-          console.log(err);
+          console.log('error on Settings.getProfile: ', err);
         });
     },
-    updateProfile() {
+    // 更新用户信息
+    updateProfile(msg) {
       this.loading = true;
       this.$axios({
         method: 'put',
@@ -126,11 +128,13 @@ export default {
         },
         data: this.user
       })
-        .then(res => {
+        .then(() => {
           Toast.fire({
             icon: 'success',
-            title: res.data.message
+            title: msg
           });
+          this.getProfile();
+          this.loading = false;
         })
         .catch(err => {
           console.log(err);
@@ -148,8 +152,8 @@ export default {
         this.upload(fileList[x]);
       });
     },
+    // 上传头像，上传完后立即更新一次用户信息
     upload(file) {
-      console.log(file);
       const formData = new FormData();
       formData.append('image', file);
       this.$axios({
@@ -162,11 +166,11 @@ export default {
         }
       })
         .then(res => {
-          console.log(res.data);
           this.user.avatar = this.$axios.defaults.baseURL + '/' + res.data.uri;
+          this.updateProfile('头像更新成功。');
         })
         .catch(err => {
-          console.log(err);
+          console.log('error on Settings.uoloadAvatar: ', err);
         });
       this.loading = false;
     }

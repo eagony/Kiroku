@@ -56,7 +56,9 @@
             </v-form>
           </v-card-text>
           <v-card-actions>
-            <v-btn block color="deep-purple" @click="doRegister">注册</v-btn>
+            <v-btn block dark color="deep-purple" @click="doRegister"
+              >注册</v-btn
+            >
           </v-card-actions>
         </v-card>
       </v-col>

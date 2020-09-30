@@ -2,7 +2,6 @@ package apis
 
 import (
 	"net/http"
-	"rinterest/extensions"
 	"rinterest/middlewares"
 	"rinterest/models"
 	"strconv"
@@ -31,7 +30,7 @@ func (t *ToDoAPI) newone(c *gin.Context) {
 		return
 	}
 
-	if err := extensions.MySQL().Create(&todo).Error; err != nil {
+	if err := myDB.Create(&todo).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"Create error": err.Error(),
 		})
@@ -54,7 +53,7 @@ func (t *ToDoAPI) deleteone(c *gin.Context) {
 		return
 	}
 
-	if err := extensions.MySQL().Delete(&models.ToDo{}, id).Error; err != nil {
+	if err := myDB.Delete(&models.ToDo{}, id).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"Delete error": err,
 		})
@@ -77,7 +76,7 @@ func (t *ToDoAPI) updateone(c *gin.Context) {
 	}
 	todo := models.ToDo{}
 
-	if err = extensions.MySQL().First(&todo, id).Error; err != nil {
+	if err = myDB.First(&todo, id).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
@@ -91,7 +90,7 @@ func (t *ToDoAPI) updateone(c *gin.Context) {
 		return
 	}
 
-	extensions.MySQL().Save(&todo)
+	myDB.Save(&todo)
 
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  "OK",
@@ -109,7 +108,7 @@ func (t *ToDoAPI) getallbyuserid(c *gin.Context) {
 	}
 
 	todos := []models.ToDo{}
-	if err = extensions.MySQL().Where("user_id = ?", id).Order("created_at asc").Find(&todos).Error; err != nil {
+	if err = myDB.Where("user_id = ?", id).Order("created_at asc").Find(&todos).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"Query error": err.Error(),
 		})

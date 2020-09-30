@@ -1,6 +1,6 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import "gorm.io/gorm"
 
 // Blog 博客模型
 type Blog struct {
@@ -14,8 +14,8 @@ type Blog struct {
 	// 可见性，默认为public
 	Invisibility string `json:"invisibility" gorm:"type:enum('public', 'private', 'protected'); default:'public'"`
 	// 统计数据
-	Views uint `json:"views" gorm:"size:8; not null; default: 0"`
-	Likes uint `json:"likes" gorm:"size:8; not null; default: 0"`
+	Views uint `json:"views" gorm:"size:8; not null; default:0"`
+	Likes uint `json:"likes" gorm:"size:8; not null; default:0"`
 
 	// 外键
 	UserID uint `json:"user_id"`
