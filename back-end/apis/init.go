@@ -12,5 +12,5 @@ var myDB *gorm.DB
 func init() {
 	myDB = extensions.MySQL()
 	// myDB = extensions.Postgresql()
-	myDB.AutoMigrate(&models.User{}, &models.ToDo{}, &models.Tag{}, &models.Diary{}, &models.Blog{})
+	myDB.AutoMigrate(&models.User{}, &models.ToDo{}, &models.Tag{}, &models.Diary{}, &models.Blog{}, &models.Comment{})
 }

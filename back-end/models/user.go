@@ -19,4 +19,6 @@ type User struct {
 	Diaries []Diary `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	// 用户博客列表，一对多
 	Blogs []Blog `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	// 用户评论列表，一对多
+	Comments []Comment `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
