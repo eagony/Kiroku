@@ -12,6 +12,6 @@ type Diary struct {
 
 	// 外键
 	UserID uint `json:"user_id"`
-	// 标签，一对多
+	// 标签，多对多
 	Tags []Tag `json:"tags" gorm:"many2many:diary_tags;"`
 }

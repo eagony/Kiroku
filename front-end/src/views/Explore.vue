@@ -38,7 +38,7 @@
 <script>
 import PublicBlogPreviewCard from '../components/PublicBlogPreviewCard';
 export default {
-  name: 'Square',
+  name: 'Explore',
   components: {
     PublicBlogPreviewCard
   },

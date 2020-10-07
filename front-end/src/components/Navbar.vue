@@ -17,8 +17,8 @@
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
-      <v-toolbar-title v-if="this.$route.path != '/square'">
-        <a class="text-decoration-none mr-5" href="/square">
+      <v-toolbar-title v-if="this.$route.path != '/explore'">
+        <a class="text-decoration-none mr-5" href="/explore">
           <span class=" text-h6 font-weight-dark" style="color:black;"
             >发现</span
           >
@@ -35,8 +35,8 @@
     </v-app-bar>
 
     <!-- 导航抽屉 -->
-    <v-navigation-drawer  v-model="drawer" app dark color="teal">
-      <v-list dense nav >
+    <v-navigation-drawer v-model="drawer" app dark color="teal">
+      <v-list dense nav>
         <v-list-item two-line>
           <v-list-item-avatar>
             <img
@@ -82,7 +82,7 @@
         </div>
       </template>
       <template v-slot:append v-else>
-                <div class="pa-2">
+        <div class="pa-2">
           <v-btn block @click="goLogin">前往登录</v-btn>
         </div>
       </template>
@@ -121,7 +121,7 @@ export default {
       this.$router.push('/login');
     },
     goLogin() {
-      this.$router.push('/login')
+      this.$router.push('/login');
     }
   }
 };

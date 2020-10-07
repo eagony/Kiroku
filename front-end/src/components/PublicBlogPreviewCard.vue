@@ -36,7 +36,7 @@
             {{ chip.text }}
           </v-chip>
         </v-col>
-        <v-col cols="12" md="3" xl="2">
+        <v-col cols="12" md="3" xl="2" class="d-flex justify-center">
           <!-- 浏览量 -->
           <v-icon class="mr-2">mdi-eye-outline</v-icon>
           <span class="subheading">{{ views }}</span>

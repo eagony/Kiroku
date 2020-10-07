@@ -167,7 +167,7 @@ export default {
       })
         .then(res => {
           this.user.avatar = this.$axios.defaults.baseURL + '/' + res.data.uri;
-          this.updateProfile('头像更新成功。');
+          this.updateProfile('头像更新成功，重新登陆后刷新。');
         })
         .catch(err => {
           console.log('error on Settings.uoloadAvatar: ', err);

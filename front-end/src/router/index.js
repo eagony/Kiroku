@@ -11,12 +11,16 @@ import ToDo from '@/views/ToDo';
 import Diary from '@/views/Diary';
 import Blog from '@/views/Blog';
 import BlogDetail from '@/views/BlogDetail';
-import Square from '@/views/Square';
+import Explore from '@/views/Explore';
 import Settings from '@/views/Settings';
 
 Vue.use(VueRouter);
 
 const routes = [
+  {
+    path: '/',
+    redirect: '/explore'
+  },
   {
     path: '/register',
     name: 'Register',
@@ -36,7 +40,7 @@ const routes = [
     }
   },
   {
-    path: '/',
+    path: '/todo',
     name: 'ToDo',
     component: ToDo,
     meta: {
@@ -82,9 +86,9 @@ const routes = [
     }
   },
   {
-    path: '/square',
-    name: 'Square',
-    component: Square,
+    path: '/explore',
+    name: 'Explore',
+    component: Explore,
     meta: {
       requireLogin: false,
       requireAdmin: false,
@@ -149,7 +153,11 @@ router.beforeEach((to, from, next) => {
     next({
       path: '/login'
     });
-  } else if (store.getters.isLoggedIn && !to.meta.requireLogin && !to.meta.isPublic) {
+  } else if (
+    store.getters.isLoggedIn &&
+    !to.meta.requireLogin &&
+    !to.meta.isPublic
+  ) {
     // 2.用户已登录，但又去访问 登录/注册/请求重置密码/重置密码 页面时不让他过去
     Swal.fire({
       position: 'top',

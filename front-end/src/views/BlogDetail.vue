@@ -25,6 +25,17 @@
         </v-row>
       </v-card-actions>
     </v-card>
+
+    <!-- 发表评论 -->
+    <div class="mt-5 mb-5 mx-auto">
+      <CommentInputCard></CommentInputCard>
+    </div>
+    
+
+    <!-- 评论列表 -->
+    <div class="">
+          <CommentCard class="mb-3" v-for="i in 4" :key="i"></CommentCard>
+    </div>
   </v-container>
 </template>
 
@@ -32,6 +43,10 @@
 import Toast from '../plugins/toast';
 import VueMarkdown from 'vue-markdown';
 import hljs from 'highlight.js';
+
+import CommentInputCard from '../components/CommentInputCard';
+import CommentCard from '../components/CommentCard';
+
 const highlightCode = () => {
   let blocks = document.querySelectorAll('pre code');
   blocks.forEach(block => {
@@ -41,7 +56,11 @@ const highlightCode = () => {
 
 export default {
   name: 'BlogDetail',
-  components: { VueMarkdown },
+  components: {
+    VueMarkdown,
+    CommentInputCard,
+    CommentCard
+  },
   data() {
     return {
       blog: {},
