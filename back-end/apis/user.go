@@ -17,7 +17,7 @@ type UserAPI struct{}
 func (u *UserAPI) Register(rg *gin.RouterGroup) {
 	rg.POST("/users/register", u.register)
 	rg.POST("/users/login", u.login)
-	rg.GET("/users/:id", middlewares.JWT(), u.getone)
+	rg.GET("/users/:id", u.getone)
 	rg.PUT("/users/:id", middlewares.JWT(), u.updateone)
 }
 

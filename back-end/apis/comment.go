@@ -17,8 +17,8 @@ type CommentAPI struct{}
 func (co *CommentAPI) Register(rg *gin.RouterGroup) {
 	rg.POST("/comments", middlewares.JWT(), co.newone)
 	rg.DELETE("/comments/:id", middlewares.JWT(), co.deleteone)
-	rg.GET("/blogs/:id/comments", middlewares.JWT(), co.getallbyblogid)
-	rg.GET("/users/:id/comments", middlewares.JWT(), co.getallbyuserid)
+	rg.GET("/blogs/:id/comments", co.getallbyblogid)
+	rg.GET("/users/:id/comments", co.getallbyuserid)
 }
 
 func (co *CommentAPI) newone(c *gin.Context) {

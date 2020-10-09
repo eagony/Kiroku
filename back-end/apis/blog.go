@@ -15,7 +15,7 @@ type BlogAPI struct{}
 // Register ...
 func (b *BlogAPI) Register(rg *gin.RouterGroup) {
 	rg.POST("/blogs", middlewares.JWT(), b.newone)
-	rg.GET("/blogs/:id", middlewares.JWT(), b.getone)
+	rg.GET("/blogs/:id", b.getone)
 	rg.GET("/publicblogs", b.getpublic)
 	rg.DELETE("/blogs/:id", middlewares.JWT(), b.deleteone)
 

@@ -41,6 +41,14 @@ export default {
   },
   methods: {
     addCommentOnBlog() {
+      if (!this.$store.getters.isLoggedIn) {
+        Toast.fire({
+          icon: 'error',
+          title: '请先登录！'
+        });
+      this.$router.push('/login')
+      return
+      }
       if (this.content.length < 1) {
         alert('总得写点什么吧。');
         return;

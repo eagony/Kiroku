@@ -1,5 +1,6 @@
-/front-end/node_modules
-/front-end/yarn-error.log
+front-end/dist
+front-end/node_modules
+front-end/yarn-error.log
 
-/back-end/data/*
-/back-end/.env
+back-end/data
+back-end/.env
