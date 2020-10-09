@@ -25,10 +25,13 @@ func main() {
 	}
 
 	router := gin.Default()
+	// 开启跨域访问
 	router.Use(middlewares.Cors())
-
+	// 路由分组
 	apiV1 := router.Group("api/v1")
+	// 文件服务
 	apiV1.StaticFS("/data/images", http.Dir("data/images"))
+	// 注册路由到接口
 	new(apis.UserAPI).Register(apiV1)
 	new(apis.ToDoAPI).Register(apiV1)
 	new(apis.TagAPI).Register(apiV1)
@@ -36,6 +39,7 @@ func main() {
 	new(apis.BlogAPI).Register(apiV1)
 	new(apis.ImageAPI).Register(apiV1)
 	new(apis.StatisticAPI).Register(apiV1)
+	new(apis.CommentAPI).Register(apiV1)
 
 	port := os.Getenv("PORT")
 

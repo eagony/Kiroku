@@ -21,9 +21,9 @@
     <v-divider></v-divider>
 
     <!-- 标签 -->
-    <v-card-text v-if="tags.length > 0">
+    <v-card-text>
       <v-row justify="center" align="center">
-        <v-col cols="12" md="9" xl="10">
+        <v-col v-if="tags.length > 0" cols="12" md="9" xl="10">
           <v-chip
             v-for="chip in tags"
             :key="chip.ID"

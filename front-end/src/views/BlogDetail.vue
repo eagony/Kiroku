@@ -16,25 +16,59 @@
         </vue-markdown>
       </v-card-text>
       <v-card-actions>
-        <v-row justify="center" align="center">
-          <v-btn fab dark small color="pink" @click="blogLikesPlus">
-            <v-icon dark>
-              mdi-heart
-            </v-icon>
-          </v-btn>
+        <v-row align="center" class="pl-5 pr-5 mt-5">
+          <v-list>
+            <v-list-item two-line>
+              <v-list-item-avatar>
+                <img
+                  :src="
+                    author.avatar ||
+                      'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
+                  "
+                />
+              </v-list-item-avatar>
+
+              <v-list-item-content>
+                <v-list-item-title class="text-body-1">{{
+                  author.username
+                }}</v-list-item-title>
+                <v-list-item-subtitle
+                  ><small> {{ blog.CreatedAt }}</small></v-list-item-subtitle
+                >
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+          <v-spacer></v-spacer>
+          <v-list class="">
+            <v-btn icon color="grey" class="ml-3" @click="blogLikesPlus">
+              <v-icon>mdi-thumb-up</v-icon>
+            </v-btn>
+            <v-btn icon color="grey" class="ml-3">
+              <v-icon>mdi-thumb-down</v-icon>
+            </v-btn>
+            <!-- <v-btn text large color="teal" class="ml-2" >评论
+            </v-btn> -->
+          </v-list>
         </v-row>
       </v-card-actions>
     </v-card>
 
     <!-- 发表评论 -->
     <div class="mt-5 mb-5 mx-auto">
-      <CommentInputCard></CommentInputCard>
+      <CommentInputCard :blogID="blog.ID"></CommentInputCard>
     </div>
-    
 
     <!-- 评论列表 -->
     <div class="">
-          <CommentCard class="mb-3" v-for="i in 4" :key="i"></CommentCard>
+      <CommentCard
+        class="mb-3"
+        v-for="comment in comments"
+        :key="comment.ID"
+        :username="comment.username"
+        :userAvatar="comment.user_avatar"
+        :createdAt="comment.CreatedAt"
+        :content="comment.content"
+      ></CommentCard>
     </div>
   </v-container>
 </template>
@@ -64,6 +98,8 @@ export default {
   data() {
     return {
       blog: {},
+      author: {},
+      comments: [],
       subfield: false,
       defaultOpen: 'preview',
       editable: false,
@@ -81,8 +117,39 @@ export default {
         }
       })
         .then(res => {
-          console.log(res.data);
           this.blog = res.data.data;
+          this.getAuthor();
+          this.getComments();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    getAuthor() {
+      this.$axios({
+        method: 'get',
+        url: `/users/${this.blog.user_id}`,
+        headers: {
+          Authorization: 'Bearer ' + window.localStorage.getItem('r-token')
+        }
+      })
+        .then(res => {
+          this.author = res.data.data;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    getComments() {
+      this.$axios({
+        method: 'get',
+        url: `/blogs/${this.blog.ID}/comments`,
+        headers: {
+          Authorization: 'Bearer ' + window.localStorage.getItem('r-token')
+        }
+      })
+        .then(res => {
+          this.comments = res.data.data;
         })
         .catch(err => {
           console.log(err);

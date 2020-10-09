@@ -196,10 +196,11 @@ export default {
             icon: 'success',
             title: '新增成功，回忆+1。'
           });
-          this.adding = false;
+
           this.tags = '';
           this.content = null;
-          this.selectedChips = [];
+          this.adding = false;
+          (this.isPublic = false), (this.selectedChips = []);
           this.getDiaryList();
         })
         .catch(err => {

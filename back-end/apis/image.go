@@ -33,7 +33,7 @@ func (i *ImageAPI) Register(rg *gin.RouterGroup) {
 func (i *ImageAPI) upload(c *gin.Context) {
 	img, err := c.FormFile("image")
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusOK, gin.H{
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
@@ -42,19 +42,17 @@ func (i *ImageAPI) upload(c *gin.Context) {
 	fileExt := strings.ToLower(path.Ext(img.Filename))
 	if fileExt != ".png" && fileExt != ".jpg" && fileExt != ".gif" && fileExt != ".jpeg" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "上传失败!只允许png,jpg,gif,jpeg文件",
+			"error": "上传失败,只允许上传png,jpg,gif,jpeg文件!",
 		})
 		return
 	}
 	// 加盐算出图片新的文件名
 	imgHashName := utils.MD5FileName(fmt.Sprintf("%s%s", img.Filename, time.Now().String()))
-	fmt.Println(imgHashName)
 	imgDir := os.Getenv("BASE_IMAGE_DIR")
 	if !utils.IsDirExists(imgDir) {
 		os.MkdirAll(imgDir, os.ModePerm)
 	}
 	imgPath := fmt.Sprintf("%s/%s%s", imgDir, imgHashName, fileExt)
-	fmt.Println(imgPath)
 	c.SaveUploadedFile(img, imgPath)
 
 	c.IndentedJSON(http.StatusOK, gin.H{

@@ -27,7 +27,7 @@ func (s *StatisticAPI) blogviewsplus(c *gin.Context) {
 	}
 	blog := models.Blog{}
 	if err := myDB.First(&blog, id).Error; err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err,
 		})
 		return
@@ -35,7 +35,8 @@ func (s *StatisticAPI) blogviewsplus(c *gin.Context) {
 	blog.Views++
 	myDB.Save(&blog)
 	c.IndentedJSON(http.StatusOK, gin.H{
-		"status": "OK",
+		"status":  "OK",
+		"message": "success",
 	})
 }
 
@@ -49,7 +50,7 @@ func (s *StatisticAPI) bloglikesplus(c *gin.Context) {
 	}
 	blog := models.Blog{}
 	if err := myDB.First(&blog, id).Error; err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err,
 		})
 		return
@@ -57,6 +58,7 @@ func (s *StatisticAPI) bloglikesplus(c *gin.Context) {
 	blog.Likes++
 	myDB.Save(&blog)
 	c.IndentedJSON(http.StatusOK, gin.H{
-		"status": "OK",
+		"status":  "OK",
+		"message": "success",
 	})
 }

@@ -5,7 +5,7 @@
         <v-card>
           <v-card-text>
             <v-row justify="center">
-              <v-form style="min-width: 450px;">
+              <v-form style="min-width: 350px;">
                 <v-row justify="center" class="mb-8">
                   <v-avatar size="200" class="avatar">
                     <img

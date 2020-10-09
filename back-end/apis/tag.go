@@ -13,8 +13,7 @@ type TagAPI struct{}
 
 // Register ...
 func (t *TagAPI) Register(rg *gin.RouterGroup) {
-	// 后面限制管理员才能使用增加接口
-	rg.POST("/tags", t.newone)
+	rg.POST("/tags", middlewares.JWT(), t.newone)
 	rg.GET("/tags", middlewares.JWT(), t.getall)
 }
 
@@ -22,22 +21,30 @@ func (t *TagAPI) newone(c *gin.Context) {
 	tag := models.Tag{}
 	if err := c.ShouldBindJSON(&tag); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"Bind error": err.Error(),
+			"error": err.Error(),
+		})
+		return
+	}
+
+	currentUserRole := middlewares.GetUserRole()
+	defer middlewares.ResetUserRole()
+	if currentUserRole != "admin" {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error": "非管理员无法添加标签！",
 		})
 		return
 	}
 
 	if err := myDB.Create(&tag).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"Create error": err.Error(),
+			"error": err.Error(),
 		})
 		return
 	}
 
 	c.IndentedJSON(http.StatusOK, gin.H{
-		"status":  200,
-		"message": " create success",
-		"data":    tag,
+		"status":  "OK",
+		"message": "success",
 	})
 }
 

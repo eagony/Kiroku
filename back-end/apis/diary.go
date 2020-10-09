@@ -1,7 +1,6 @@
 package apis
 
 import (
-	"fmt"
 	"net/http"
 	"rinterest/middlewares"
 	"rinterest/models"
@@ -26,69 +25,83 @@ func (d *DiaryAPI) newone(c *gin.Context) {
 	diary := models.Diary{}
 	if err := c.ShouldBindJSON(&diary); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"Bind error": err.Error(),
+			"error": err.Error(),
 		})
 		return
 	}
 	if err := myDB.Create(&diary).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"Create error": err.Error(),
+			"error": err.Error(),
 		})
 		return
 	}
 
 	c.IndentedJSON(http.StatusOK, gin.H{
-		"status":  200,
-		"message": " create success",
+		"status":  "OK",
+		"message": "success",
 		"data":    diary,
 	})
 }
 
 func (d *DiaryAPI) deleteone(c *gin.Context) {
-	id, idError := strconv.Atoi(c.Param("id"))
-	if idError != nil || id < 0 {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"Convert id error": idError,
-		})
-		return
-	}
-
-	if err := myDB.Delete(&models.Diary{}, id).Error; err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"Delete error": err,
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Delete succed.",
-		"status":  "OK",
-		"data":    "",
-	})
-}
-
-func (d *DiaryAPI) getone(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
+	if err != nil || id <= 0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"Convert id error": err.Error(),
+			"error": "invalid query params",
 		})
 		return
 	}
 
 	diary := models.Diary{}
-	if err = myDB.Preload("Tags").Where("id = ?", id).Find(&diary).Error; err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"Query error": err.Error(),
+	if err = myDB.Where("id = ?", id).Find(&diary).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
 		})
 		return
 	}
 	currentUserID := middlewares.GetUserID()
 	defer middlewares.ResetUserID()
-	fmt.Println(currentUserID, diary.UserID)
-	if diary.UserID != currentUserID {
+	if currentUserID != diary.UserID {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"error": "偷看别人的日记是不好的哦！",
+			"error": "怎么能擅自删除别人的日记呢！",
+		})
+		return
+	}
+
+	if err := myDB.Delete(&diary).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "OK",
+		"message": "succed",
+	})
+}
+
+func (d *DiaryAPI) getone(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil || id <= 0 {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "invalid query param",
+		})
+		return
+	}
+
+	diary := models.Diary{}
+	if err = myDB.Where("id = ?", id).Find(&diary).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	currentUserID := middlewares.GetUserID()
+	defer middlewares.ResetUserID()
+	if diary.Invisibility == "private" && currentUserID != diary.UserID {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error": "不能偷看别人的私密日记哦！",
 		})
 		return
 	}
@@ -101,17 +114,41 @@ func (d *DiaryAPI) getone(c *gin.Context) {
 
 func (d *DiaryAPI) getallbyuserid(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
+	if err != nil || id <= 0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"Convert id error": err.Error(),
+			"error": "invalid query param",
+		})
+		return
+	}
+
+	currentUserID := middlewares.GetUserID()
+	defer middlewares.ResetUserID()
+	if currentUserID != uint(id) {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error": "不能偷看别人的日记列表哦！",
 		})
 		return
 	}
 
 	diaries := []models.Diary{}
 	if err = myDB.Preload("Tags").Where("user_id = ?", id).Order("created_at desc").Find(&diaries).Error; err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"Query error": err.Error(),
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	c.IndentedJSON(http.StatusOK, gin.H{
+		"status":  "OK",
+		"message": "success",
+		"data":    diaries,
+	})
+}
+
+func (d *DiaryAPI) getpublic(c *gin.Context) {
+	diaries := []models.Diary{}
+	if err := myDB.Preload("Tags").Where("invisibility = ?", "public").Order("created_at desc").Find(&diaries).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
 		})
 		return
 	}

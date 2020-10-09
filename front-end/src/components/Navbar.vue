@@ -77,12 +77,12 @@
       </v-list>
 
       <template v-slot:append v-if="this.$store.getters.isLoggedIn">
-        <div class="pa-2">
+        <div class="pa-2 mb-5">
           <v-btn block @click="doLogout">注销登录</v-btn>
         </div>
       </template>
       <template v-slot:append v-else>
-        <div class="pa-2">
+        <div class="pa-2 mb-5">
           <v-btn block @click="goLogin">前往登录</v-btn>
         </div>
       </template>
@@ -99,7 +99,7 @@ export default {
       show: true,
       drawer: false,
       items: [
-        { title: '代办', icon: 'mdi-format-list-bulleted', route: '/' },
+        { title: '代办', icon: 'mdi-format-list-bulleted', route: '/todo' },
         { title: '日记', icon: 'mdi-book-open-blank-variant', route: '/diary' },
         { title: '博客', icon: 'mdi-post-outline', route: '/blog' },
         // { title: '文件', icon: 'mdi-file', route: '/file' },

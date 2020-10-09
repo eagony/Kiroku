@@ -2,7 +2,6 @@ package apis
 
 import (
 	"net/http"
-	"rinterest/extensions"
 	"rinterest/middlewares"
 	"rinterest/models"
 	"rinterest/utils"
@@ -24,9 +23,9 @@ func (u *UserAPI) Register(rg *gin.RouterGroup) {
 
 func (u *UserAPI) getone(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
+	if err != nil || id <= 0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"Convert id error": err.Error(),
+			"error": "invalid query param",
 		})
 		return
 	}
@@ -34,10 +33,11 @@ func (u *UserAPI) getone(c *gin.Context) {
 	user := models.User{}
 	if err = myDB.Where("id = ?", id).Find(&user).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"Query error": err.Error(),
+			"error": err.Error(),
 		})
 		return
 	}
+	user.Password = ""
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  "OK",
 		"message": "success",
@@ -47,17 +47,26 @@ func (u *UserAPI) getone(c *gin.Context) {
 
 func (u *UserAPI) updateone(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
+	if err != nil || id <= 0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "invalid query param",
+		})
+		return
+	}
+
+	user := models.User{}
+	if err = myDB.First(&user, id).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
-	user := models.User{}
 
-	if err = myDB.First(&user, id).Error; err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
+	currentUserID := middlewares.GetUserID()
+	defer middlewares.ResetUserID()
+	if currentUserID != user.ID {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error": "怎么能擅自更改别人的信息呢！",
 		})
 		return
 	}
@@ -81,7 +90,7 @@ func (u *UserAPI) register(c *gin.Context) {
 	user := models.User{}
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"Bind error": err.Error(),
+			"error": err.Error(),
 		})
 		return
 	}
@@ -90,14 +99,15 @@ func (u *UserAPI) register(c *gin.Context) {
 
 	if err := myDB.Create(&user).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"Create error": err.Error(),
+			"error": err.Error(),
 		})
 		return
 	}
 
+	user.Password = ""
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  200,
-		"message": " create success",
+		"message": "success",
 		"data":    user,
 	})
 }
@@ -110,13 +120,13 @@ func (u *UserAPI) login(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&loginForm); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"Bind error": err.Error(),
+			"error": err.Error(),
 		})
 		return
 	}
 
 	user := models.User{}
-	extensions.MySQL().Where("username = ?", loginForm.Username).Find(&user)
+	myDB.Where("username = ?", loginForm.Username).Find(&user)
 
 	if user.Username == "" {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
@@ -133,7 +143,7 @@ func (u *UserAPI) login(c *gin.Context) {
 	}
 	token, err := middlewares.NewToken(&user)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": "生成凭证失败.",
 		})
 		return
@@ -141,47 +151,5 @@ func (u *UserAPI) login(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status": "OK",
 		"data":   token,
-	})
-}
-
-// 批量查询用户的一对多模型
-
-func (u *UserAPI) todolist(c *gin.Context) {
-	userID, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"Convert id error": err.Error(),
-		})
-		return
-	}
-
-	user := models.User{}
-
-	extensions.MySQL().Preload("ToDos").Where("id = ?", userID).Find(&user)
-
-	c.IndentedJSON(http.StatusOK, gin.H{
-		"status":  "OK",
-		"message": "success",
-		"data":    user.ToDos,
-	})
-}
-
-func (u *UserAPI) diarylist(c *gin.Context) {
-	userID, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"Convert id error": err.Error(),
-		})
-		return
-	}
-
-	user := models.User{}
-
-	myDB.Order("created_at desc").Preload("Diaries").Where("id = ?", userID).Find(&user)
-
-	c.IndentedJSON(http.StatusOK, gin.H{
-		"status":  "OK",
-		"message": "success",
-		"data":    user.Diaries,
 	})
 }

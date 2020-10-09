@@ -7,7 +7,9 @@
         <v-card>
           <!-- 不输入时 -->
           <v-card-title v-if="!adding">
-            <div class="text-justify text--black">共 10 篇博客</div>
+            <div class="text-justify text--black">
+              共 {{ blogs.length }} 篇博客
+            </div>
             <v-spacer></v-spacer>
             <div>
               <v-btn class="mx-2" fab dark color="teal" @click="adding = true">

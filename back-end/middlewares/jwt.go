@@ -16,6 +16,9 @@ import (
 // UserID 全局用户ID变量
 var UserID uint
 
+// UserRole 全局用户Role变量
+var UserRole string
+
 func init() {
 	UserID = 0
 	err := godotenv.Load()
@@ -85,6 +88,7 @@ func JWT() gin.HandlerFunc {
 			})
 		}
 		UserID = uint(claim["id"].(float64))
+		UserRole = claim["role"].(string)
 		c.Next()
 	}
 }
@@ -97,4 +101,14 @@ func GetUserID() uint {
 // ResetUserID ...
 func ResetUserID() {
 	UserID = 0
+}
+
+// GetUserRole ...
+func GetUserRole() string {
+	return UserRole
+}
+
+// ResetUserRole ...
+func ResetUserRole() {
+	UserRole = "user"
 }

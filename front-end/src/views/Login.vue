@@ -64,7 +64,7 @@ export default {
           window.localStorage.setItem('r-token', res.data.data);
           let user = JSON.parse(atob(res.data.data.split('.')[1]));
           this.$store.commit('login', user);
-          this.$router.push('/');
+          this.$router.push('/todo');
           Toast.fire({
             icon: 'success',
             title: '登录成功，开始美好一天。'

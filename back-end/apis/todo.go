@@ -25,22 +25,21 @@ func (t *ToDoAPI) newone(c *gin.Context) {
 	todo := models.ToDo{}
 	if err := c.ShouldBindJSON(&todo); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"Bind error": err.Error(),
+			"error": err.Error(),
 		})
 		return
 	}
 
 	if err := myDB.Create(&todo).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"Create error": err.Error(),
+			"error": err.Error(),
 		})
 		return
 	}
 
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  200,
-		"message": " create success",
-		"data":    todo,
+		"message": "success",
 	})
 }
 
@@ -48,37 +47,62 @@ func (t *ToDoAPI) deleteone(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id < 0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"Convert id error": err,
+			"error": err,
 		})
 		return
 	}
 
-	if err := myDB.Delete(&models.ToDo{}, id).Error; err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"Delete error": err,
+	todo := models.ToDo{}
+	if err = myDB.Where("id = ?", id).Find(&todo).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	currentUserID := middlewares.GetUserID()
+	defer middlewares.ResetUserID()
+	if currentUserID != todo.UserID {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error": "怎么能擅自删除别人的日记呢,调皮！",
+		})
+		return
+	}
+
+	if err := myDB.Delete(&todo).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error": err,
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "删除成功。",
 		"status":  "OK",
+		"message": "删除成功。",
 	})
 }
 
 func (t *ToDoAPI) updateone(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
+	if err != nil || id <= 0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "invalid query param",
+		})
+		return
+	}
+
+	todo := models.ToDo{}
+	if err = myDB.First(&todo, id).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
-	todo := models.ToDo{}
 
-	if err = myDB.First(&todo, id).Error; err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
+	currentUserID := middlewares.GetUserID()
+	defer middlewares.ResetUserID()
+	if currentUserID != todo.UserID {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error": "怎么能擅自更改别人的代办呢！",
 		})
 		return
 	}
@@ -102,15 +126,24 @@ func (t *ToDoAPI) getallbyuserid(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"Convert id error": err.Error(),
+			"error": err.Error(),
+		})
+		return
+	}
+
+	currentUserID := middlewares.GetUserID()
+	defer middlewares.ResetUserID()
+	if currentUserID != uint(id) {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error": "不能偷看别人的代办列表哦！",
 		})
 		return
 	}
 
 	todos := []models.ToDo{}
 	if err = myDB.Where("user_id = ?", id).Order("created_at asc").Find(&todos).Error; err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"Query error": err.Error(),
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
 		})
 		return
 	}
