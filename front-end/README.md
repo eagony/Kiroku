@@ -1,4 +1,4 @@
-# rinterest-vuetify
+# kiroku-vuetify
 
 ## Project setup
 ```
