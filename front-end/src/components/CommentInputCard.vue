@@ -46,8 +46,8 @@ export default {
           icon: 'error',
           title: '请先登录！'
         });
-      this.$router.push('/login')
-      return
+        this.$router.push('/login');
+        return;
       }
       if (this.content.length < 1) {
         alert('总得写点什么吧。');
