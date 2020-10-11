@@ -1,12 +1,9 @@
 <template>
   <v-container class="fill-height" fluid>
-    <v-snackbar v-model="snackbar" color="error" timeout="6000" :top="true">
-      当前有错误，不允许提交注册。
-    </v-snackbar>
     <v-row align="center" justify="center">
-      <v-col cols="12" sm="8" md="4">
+      <v-col cols="12" md="4" xl="3">
         <v-card class="elevation-12">
-          <v-img src="../assets/cover3.jpg" max-height="250"></v-img>
+          <v-img src="../assets/cv1.png" max-height="250"></v-img>
           <v-toolbar class="pt-3" color="white" light flat>
             <v-toolbar-title>账号注册</v-toolbar-title>
             <v-spacer></v-spacer>

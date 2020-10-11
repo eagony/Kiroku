@@ -36,7 +36,7 @@
             {{ chip.text }}
           </v-chip>
         </v-col>
-        <v-col cols="12" md="3" xl="2" class="d-flex justify-center">
+        <v-col cols="12" md="3" xl="2" class="d-flex justify-end">
           <!-- 浏览量 -->
           <v-icon class="mr-2">mdi-eye-outline</v-icon>
           <span class="subheading">{{ views }}</span>
@@ -47,7 +47,8 @@
           <v-divider vertical class="ml-5 mr-5"></v-divider>
           <!-- 评论数 -->
           <v-icon class="mr-2">mdi-comment-outline</v-icon>
-          <span class="subheading">0</span>
+          <span class="subheading">{{ comments }}</span>
+          <div class="mr-3"></div>
         </v-col>
       </v-row>
     </v-card-text>
@@ -58,6 +59,6 @@
 <script>
 export default {
   name: 'PublicBlogPreviewCard',
-  props: ['id', 'title', 'summary', 'tags', 'views', 'likes']
+  props: ['id', 'title', 'summary', 'tags', 'views', 'likes', 'comments']
 };
 </script>

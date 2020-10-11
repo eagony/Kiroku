@@ -1,7 +1,7 @@
 <template>
   <v-container>
-    <v-row dense>
-      <v-col cols="12">
+    <v-row class="justify-center" dense>
+      <v-col cols="12" md="9" xl="7">
         <v-card>
           <v-card-title v-if="!adding">
             <div class="text-justify text--black">
@@ -62,7 +62,7 @@
           </v-card-actions>
         </v-card>
       </v-col>
-      <v-col v-for="diary in diaries" :key="diary.ID" cols="12">
+      <v-col cols="12" md="9" xl="7" v-for="diary in diaries" :key="diary.ID">
         <v-card class="mx-auto">
           <v-card-title>
             <p class="text-justify">

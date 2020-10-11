@@ -22,5 +22,5 @@ type Blog struct {
 	// 标签，一对多
 	Tags []Tag `json:"tags" gorm:"many2many:blog_tags;"`
 	// 博客评论列表，一对多
-	Comments []Comment `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Comments []Comment `json:"comments" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }

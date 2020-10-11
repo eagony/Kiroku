@@ -131,7 +131,7 @@ func (b *BlogAPI) getallbyuserid(c *gin.Context) {
 		return
 	}
 	bloges := []models.Blog{}
-	if err = myDB.Preload("Tags").Where("user_id = ?", id).Order("created_at desc").Find(&bloges).Error; err != nil {
+	if err = myDB.Preload("Tags").Preload("Comments").Where("user_id = ?", id).Order("created_at desc").Find(&bloges).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -146,7 +146,7 @@ func (b *BlogAPI) getallbyuserid(c *gin.Context) {
 
 func (b *BlogAPI) getpublic(c *gin.Context) {
 	bloges := []models.Blog{}
-	if err := myDB.Preload("Tags").Where("invisibility = ?", "public").Order("created_at desc").Find(&bloges).Error; err != nil {
+	if err := myDB.Preload("Tags").Preload("Comments").Where("invisibility = ?", "public").Order("created_at desc").Find(&bloges).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})

@@ -18,7 +18,7 @@
               username
             }}</v-list-item-title>
             <v-list-item-subtitle
-              ><small> {{ createdAt }}</small></v-list-item-subtitle
+              ><small> {{ commentCreatedTime }}</small></v-list-item-subtitle
             >
           </v-list-item-content>
         </v-list-item>
@@ -31,8 +31,8 @@
       </div>
     </v-card-text>
     <v-card-actions>
-      <v-spacer></v-spacer>
-      <v-list class="">
+      <!-- <v-spacer></v-spacer> -->
+      <v-list class="ml-13 pl-5">
         <v-btn icon color="grey">
           <v-icon>mdi-thumb-up</v-icon>
         </v-btn>
@@ -47,8 +47,14 @@
 </template>
 
 <script>
+import moment from '../plugins/moment';
 export default {
   name: 'CommentCard',
-  props: ['username', 'userAvatar', 'createdAt', 'content']
+  props: ['username', 'userAvatar', 'createdAt', 'content'],
+  computed: {
+    commentCreatedTime: function() {
+      return moment(this.createdAt).format('llll');
+    }
+  }
 };
 </script>

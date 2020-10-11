@@ -1,9 +1,9 @@
 <template>
   <v-container class="fill-height" fluid>
     <v-row align="center" justify="center">
-      <v-col cols="12" sm="8" md="4">
+      <v-col cols="12" md="4" xl="3">
         <v-card class="elevation-12">
-          <v-img src="../assets/cover1.jpg" max-height="250"></v-img>
+          <v-img src="../assets/cv2.png" max-height="250"></v-img>
           <v-toolbar class="pt-3" color="white" light flat>
             <v-toolbar-title>登陆到 <strong>Kiroku</strong></v-toolbar-title>
             <v-spacer></v-spacer>

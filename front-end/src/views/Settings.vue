@@ -1,7 +1,7 @@
 <template>
   <v-container>
-    <v-row dense>
-      <v-col cols="12">
+    <v-row class="justify-center" dense>
+      <v-col cols="12" md="9" xl="7">
         <v-card>
           <v-card-text>
             <v-row justify="center">

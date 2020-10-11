@@ -1,8 +1,8 @@
 <template>
   <v-container>
-    <v-row dense>
+    <v-row class="justify-center" dense>
       <!-- 编辑栏 -->
-      <v-col cols="12">
+      <v-col cols="12" md="9" xl="7">
         <!-- 提示栏 -->
         <v-card>
           <!-- 不输入时 -->
@@ -101,29 +101,33 @@
           </v-card-actions>
         </v-card>
       </v-col>
-    </v-row>
 
-    <!-- 博客列表 -->
-    <v-row>
-      <v-col cols="12" v-for="blog in blogs" :key="blog.ID">
+      <!-- 博客列表 -->
+      <v-col cols="12" md="9" xl="7" v-for="blog in blogs" :key="blog.ID">
         <v-card class="">
           <!-- 标题 -->
-          <v-card-title class="d-flex justify-center">
-            <span class="title font-weight-regular">{{ blog.title }}</span>
-          </v-card-title>
+          <router-link
+            :to="{ name: 'BlogDetail', params: { id: blog.ID } }"
+            style="text-decoration: none; color: black;"
+          >
+            <v-card-title class="d-flex justify-center">
+              <span class="title font-weight-regular">{{ blog.title }}</span>
+            </v-card-title>
+          </router-link>
+
           <!-- 摘要 -->
-          <v-card-text>
-            <router-link
-              :to="{ name: 'BlogDetail', params: { id: blog.ID } }"
-              style="text-decoration: none;"
-            >
+          <router-link
+            :to="{ name: 'BlogDetail', params: { id: blog.ID } }"
+            style="text-decoration: none;"
+          >
+            <v-card-text>
               <div class="ml-1 mr-1">
                 <h5 class="text-h6 font-weight-regular" style="color: black;">
                   {{ blog.summary }}
                 </h5>
               </div>
-            </router-link>
-          </v-card-text>
+            </v-card-text>
+          </router-link>
 
           <v-divider></v-divider>
 
@@ -160,7 +164,9 @@
 
               <!-- 评论数 -->
               <v-icon class="mr-2">mdi-comment-outline</v-icon>
-              <span class="subheading">45</span>
+              <span class="subheading">{{
+                blog.comments ? blog.comments.length : 0
+              }}</span>
 
               <v-divider vertical class="ml-5 mr-5"></v-divider>
 

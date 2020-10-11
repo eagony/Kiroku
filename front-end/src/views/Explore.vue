@@ -1,16 +1,19 @@
 <template>
   <v-container>
-    <v-row dense>
-      <v-col cols="12">
+    <v-row class="justify-center">
+      <v-col cols="12" md="10" xl="8">
         <!-- 提示栏 -->
         <v-card>
           <v-card-title>
-            <div class="text-justify text--black">
-              共 {{ blogs.length }} 篇公开博客
+            <div class="text-justify text--black ml-1">
+              <span class="text-h4">
+                {{ blogs.length }}
+              </span>
+              篇公开博客
             </div>
             <v-spacer></v-spacer>
             <div>
-              <v-btn class="mx-2" fab dark color="teal">
+              <v-btn class="mx-2" fab dark color="teal" @click="refreshPage">
                 <v-icon dark>mdi-refresh</v-icon>
               </v-btn>
             </div>
@@ -20,8 +23,8 @@
     </v-row>
 
     <!-- 博客列表 -->
-    <v-row>
-      <v-col cols="12" v-for="blog in blogs" :key="blog.ID">
+    <v-row class="justify-center">
+      <v-col cols="12" md="10" xl="8" v-for="blog in blogs" :key="blog.ID">
         <PublicBlogPreviewCard
           :id="blog.ID"
           :title="blog.title"
@@ -29,6 +32,7 @@
           :tags="blog.tags"
           :views="blog.views"
           :likes="blog.likes"
+          :comments="blog.comments.length"
         ></PublicBlogPreviewCard>
       </v-col>
     </v-row>
@@ -48,6 +52,9 @@ export default {
     };
   },
   methods: {
+    refreshPage() {
+      this.getPublicBlogList();
+    },
     getPublicBlogList() {
       this.$axios({
         method: 'get',

@@ -1,58 +1,62 @@
 <template>
   <v-container>
-    <v-card>
-      <v-card-title>
-        <v-row class="my-1" align="center">
-          <strong class="mx-4 success--text text--darken-2">
-            全部任务: {{ tasks.length }}
-          </strong>
-          <v-divider vertical></v-divider>
-          <strong class="mx-4 info--text text--darken-2">
-            剩余: {{ remainingTasks }}
-          </strong>
-          <v-spacer></v-spacer>
-          <v-progress-circular
-            size="40"
-            width="5"
-            :value="progress"
-            color="pink"
-            class="mr-4"
-          ></v-progress-circular>
-        </v-row>
-      </v-card-title>
-    </v-card>
-    <v-text-field
-      solo
-      v-model="task"
-      label="点击新建，回车完成..."
-      @keypress.enter="addTask"
-    >
-      <template v-slot:append>
-        <v-icon v-if="task" @click="addTask">
-          add
-        </v-icon>
-      </template>
-    </v-text-field>
+    <v-row class="justify-center">
+      <v-col cols="12" md="9" xl="7">
+        <v-card>
+          <v-card-title>
+            <v-row class="my-1" align="center">
+              <strong class="mx-4 success--text text--darken-2">
+                全部任务: {{ tasks.length }}
+              </strong>
+              <v-divider vertical></v-divider>
+              <strong class="mx-4 info--text text--darken-2">
+                剩余: {{ remainingTasks }}
+              </strong>
+              <v-spacer></v-spacer>
+              <v-progress-circular
+                size="40"
+                width="5"
+                :value="progress"
+                color="pink"
+                class="mr-4"
+              ></v-progress-circular>
+            </v-row>
+          </v-card-title>
+        </v-card>
+        <v-text-field
+          solo
+          v-model="task"
+          label="点击新建，回车完成..."
+          @keypress.enter="addTask"
+        >
+          <template v-slot:append>
+            <v-icon v-if="task" @click="addTask">
+              add
+            </v-icon>
+          </template>
+        </v-text-field>
 
-    <v-card v-for="(task, i) in tasks" :key="`${i}-divider`">
-      <v-card-title>
-        <v-spacer></v-spacer>
-        <div :class="(task.done && 'grey--text') || 'success--text'">
-          {{ task.text }}
-          <v-spacer></v-spacer>
-        </div>
-        <v-spacer></v-spacer>
-        <div class="d-flex align-center">
-          <v-checkbox
-            v-model="task.done"
-            label=""
-            :class="(task.done && 'success--text') || 'primary--text'"
-            @click="updateTask(task)"
-          ></v-checkbox>
-          <v-icon @click="deleteTask(task.ID)">delete</v-icon>
-        </div>
-      </v-card-title>
-    </v-card>
+        <v-card v-for="(task, i) in tasks" :key="`${i}-divider`">
+          <v-card-title>
+            <v-spacer></v-spacer>
+            <div :class="(task.done && 'grey--text') || 'success--text'">
+              {{ task.text }}
+              <v-spacer></v-spacer>
+            </div>
+            <v-spacer></v-spacer>
+            <div class="d-flex align-center">
+              <v-checkbox
+                v-model="task.done"
+                label=""
+                :class="(task.done && 'success--text') || 'primary--text'"
+                @click="updateTask(task)"
+              ></v-checkbox>
+              <v-icon @click="deleteTask(task.ID)">delete</v-icon>
+            </div>
+          </v-card-title>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 

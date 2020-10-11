@@ -33,7 +33,7 @@ func init() {
 		DontSupportRenameColumn:   true,  // 用 `change` 重命名列，MySQL 8 之前的数据库和 MariaDB 不支持重命名列
 		SkipInitializeWithVersion: false, // 根据当前 MySQL 版本自动配置
 	}), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info), // 设置Log级别，Silent, Error, Warn, Info
+		Logger: logger.Default.LogMode(logger.Error), // 设置Log级别，Silent, Error, Warn, Info
 	})
 	if err != nil {
 		panic("Connect to MySQL has failed.")

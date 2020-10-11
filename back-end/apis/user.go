@@ -37,11 +37,16 @@ func (u *UserAPI) getone(c *gin.Context) {
 		})
 		return
 	}
-	user.Password = ""
+	data := models.User{}
+	data.Avatar = user.Avatar
+	data.Username = user.Username
+	data.Signature = user.Signature
+	data.Email = user.Email
+	data.Phone = user.Phone
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  "OK",
 		"message": "success",
-		"data":    user,
+		"data":    data,
 	})
 }
 
@@ -70,15 +75,16 @@ func (u *UserAPI) updateone(c *gin.Context) {
 		})
 		return
 	}
-
-	if err = c.ShouldBindJSON(&user); err != nil {
+	newUser := models.User{}
+	if err = c.ShouldBindJSON(&newUser); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
 
-	myDB.Save(&user)
+	// 根据 `struct` 更新属性，只会更新非零值的字段
+	myDB.Model(&user).Updates(&newUser)
 
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  "OK",
