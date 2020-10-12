@@ -49,15 +49,16 @@
               <v-list class="mr-5">
                 <v-btn
                   icon
+                  large
                   :color="thumbUpColor"
                   class="ml-3"
                   @click="blogLikesPlus"
                 >
                   <v-icon>mdi-thumb-up</v-icon>
                 </v-btn>
-                <v-btn icon color="grey" class="ml-3">
+                <!-- <v-btn icon color="grey" class="ml-3">
                   <v-icon>mdi-thumb-down</v-icon>
-                </v-btn>
+                </v-btn> -->
                 <!-- <v-btn text large color="teal" class="ml-2" >评论
             </v-btn> -->
               </v-list>
@@ -100,13 +101,14 @@
 </template>
 
 <script>
-import Toast from '../plugins/toast';
-import VueMarkdown from 'vue-markdown';
+import Swal from 'sweetalert2';
 import hljs from 'highlight.js';
+import Toast from '../plugins/toast';
 import moment from '../plugins/moment';
 
-import CommentInputCard from '../components/CommentInputCard';
+import VueMarkdown from 'vue-markdown';
 import CommentCard from '../components/CommentCard';
+import CommentInputCard from '../components/CommentInputCard';
 
 const highlightCode = () => {
   let blocks = document.querySelectorAll('pre code');
@@ -156,7 +158,11 @@ export default {
           this.getComments();
         })
         .catch(err => {
-          console.log(err);
+          Swal.fire({
+            icon: 'error',
+            title: '出错了',
+            text: `${err.response.data.error}`
+          });
         });
     },
     getAuthor() {
@@ -171,7 +177,11 @@ export default {
           this.author = res.data.data;
         })
         .catch(err => {
-          console.log(err);
+          Swal.fire({
+            icon: 'error',
+            title: '出错了',
+            text: `${err.response.data.error}`
+          });
         });
     },
     getComments() {
@@ -186,17 +196,33 @@ export default {
           this.comments = res.data.data;
         })
         .catch(err => {
-          console.log(err);
+          Swal.fire({
+            icon: 'error',
+            title: '出错了',
+            text: `${err.response.data.error}`
+          });
         });
     },
     blogViewsPlus() {
       this.$axios
         .get(`/statistic/blogs/${this.$route.params.id}/views`)
         .catch(err => {
-          console.log(err);
+          Swal.fire({
+            icon: 'error',
+            title: '出错了',
+            text: `${err.response.data.error}`
+          });
         });
     },
     blogLikesPlus() {
+      if (this.thumbUpColor == 'pink') {
+        Swal.fire({
+          icon: 'error',
+          title: '',
+          text: '请勿重复点赞。'
+        });
+        return;
+      }
       this.$axios
         .get(`/statistic/blogs/${this.$route.params.id}/likes`)
         .then(() => {
@@ -207,7 +233,11 @@ export default {
           });
         })
         .catch(err => {
-          console.err(err);
+          Swal.fire({
+            icon: 'error',
+            title: '出错了',
+            text: `${err.response.data.error}`
+          });
         });
     }
   },

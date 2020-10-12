@@ -25,10 +25,7 @@
         </a>
       </v-toolbar-title>
       <v-toolbar-title>
-        <a
-          class="text-decoration-none"
-          href="https://github.com/eagony/Rinterest"
-        >
+        <a class="text-decoration-none" href="https://github.com/eagony/Kiroku">
           <span class="font-weight-dark" style="color:black;">Github</span></a
         >
       </v-toolbar-title>

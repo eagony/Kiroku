@@ -2,8 +2,8 @@ package apis
 
 import (
 	"net/http"
-	"rinterest/middlewares"
-	"rinterest/models"
+	"kiroku/middlewares"
+	"kiroku/models"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -17,7 +17,6 @@ func (d *DiaryAPI) Register(rg *gin.RouterGroup) {
 	rg.POST("/diaries", middlewares.JWT(), d.newone)
 	rg.GET("/diaries/:id", middlewares.JWT(), d.getone)
 	rg.DELETE("/diaries/:id", middlewares.JWT(), d.deleteone)
-
 	rg.GET("/users/:id/diaries", middlewares.JWT(), d.getallbyuserid)
 }
 
@@ -29,7 +28,8 @@ func (d *DiaryAPI) newone(c *gin.Context) {
 		})
 		return
 	}
-	if err := myDB.Create(&diary).Error; err != nil {
+
+	if err := db.Create(&diary).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -47,18 +47,19 @@ func (d *DiaryAPI) deleteone(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "invalid query params",
+			"error": "invalid query param.",
 		})
 		return
 	}
 
 	diary := models.Diary{}
-	if err = myDB.Where("id = ?", id).Find(&diary).Error; err != nil {
+	if err = db.Where("id = ?", id).Find(&diary).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
+
 	currentUserID := middlewares.GetUserID()
 	defer middlewares.ResetUserID()
 	if currentUserID != diary.UserID {
@@ -68,7 +69,7 @@ func (d *DiaryAPI) deleteone(c *gin.Context) {
 		return
 	}
 
-	if err := myDB.Delete(&diary).Error; err != nil {
+	if err := db.Delete(&diary).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -85,18 +86,19 @@ func (d *DiaryAPI) getone(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "invalid query param",
+			"error": "invalid query param.",
 		})
 		return
 	}
 
 	diary := models.Diary{}
-	if err = myDB.Where("id = ?", id).Find(&diary).Error; err != nil {
+	if err = db.Where("id = ?", id).Find(&diary).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
+
 	currentUserID := middlewares.GetUserID()
 	defer middlewares.ResetUserID()
 	if diary.Invisibility == "private" && currentUserID != diary.UserID {
@@ -105,6 +107,7 @@ func (d *DiaryAPI) getone(c *gin.Context) {
 		})
 		return
 	}
+
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  "OK",
 		"message": "success",
@@ -116,7 +119,7 @@ func (d *DiaryAPI) getallbyuserid(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "invalid query param",
+			"error": "invalid query param.",
 		})
 		return
 	}
@@ -131,7 +134,7 @@ func (d *DiaryAPI) getallbyuserid(c *gin.Context) {
 	}
 
 	diaries := []models.Diary{}
-	if err = myDB.Preload("Tags").Where("user_id = ?", id).Order("created_at desc").Find(&diaries).Error; err != nil {
+	if err = db.Preload("Tags").Where("user_id = ?", id).Order("created_at desc").Find(&diaries).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -146,7 +149,7 @@ func (d *DiaryAPI) getallbyuserid(c *gin.Context) {
 
 func (d *DiaryAPI) getpublic(c *gin.Context) {
 	diaries := []models.Diary{}
-	if err := myDB.Preload("Tags").Where("invisibility = ?", "public").Order("created_at desc").Find(&diaries).Error; err != nil {
+	if err := db.Preload("Tags").Where("invisibility = ?", "public").Order("created_at desc").Find(&diaries).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})

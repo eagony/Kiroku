@@ -87,6 +87,7 @@
 </template>
 
 <script>
+import Swal from 'sweetalert2';
 import Toast from '../plugins/toast';
 
 export default {
@@ -114,7 +115,11 @@ export default {
           this.user = res.data.data;
         })
         .catch(err => {
-          console.log('error on Settings.getProfile: ', err);
+          Swal.fire({
+            icon: 'error',
+            title: '出错了',
+            text: `${err.response.data.error}`
+          });
         });
     },
     // 更新用户信息
@@ -137,7 +142,11 @@ export default {
           this.loading = false;
         })
         .catch(err => {
-          console.log(err);
+          Swal.fire({
+            icon: 'error',
+            title: '出错了',
+            text: `${err.response.data.error}`
+          });
         });
     },
 
@@ -166,11 +175,15 @@ export default {
         }
       })
         .then(res => {
-          this.user.avatar = this.$axios.defaults.baseURL + '/' + res.data.uri;
+          this.user.avatar = this.$axios.defaults.baseURL + '/' + res.data.url;
           this.updateProfile('头像更新成功，重新登陆后刷新。');
         })
         .catch(err => {
-          console.log('error on Settings.uoloadAvatar: ', err);
+          Swal.fire({
+            icon: 'error',
+            title: '出错了',
+            text: `${err.response.data.error}`
+          });
         });
       this.loading = false;
     }

@@ -29,6 +29,7 @@
 
 <script>
 import Toast from '../plugins/toast';
+import Swal from 'sweetalert2';
 
 export default {
   name: 'CommentInputCard',
@@ -50,7 +51,11 @@ export default {
         return;
       }
       if (this.content.length < 1) {
-        alert('总得写点什么吧。');
+        Swal.fire({
+          icon: 'warning',
+          title: '出错了',
+          text: '评论总得写点内容吧。'
+        });
         return;
       }
       this.$axios({
@@ -78,7 +83,11 @@ export default {
           this.$parent.getComments();
         })
         .catch(err => {
-          console.log('error on Blog.addBlog: ', err);
+          Swal.fire({
+            icon: 'error',
+            title: '出错了',
+            text: `${err.response.data.error}`
+          });
         });
     }
   }

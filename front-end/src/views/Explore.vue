@@ -40,7 +40,9 @@
 </template>
 
 <script>
+import Swal from 'sweetalert2';
 import PublicBlogPreviewCard from '../components/PublicBlogPreviewCard';
+
 export default {
   name: 'Explore',
   components: {
@@ -67,7 +69,11 @@ export default {
           this.blogs = res.data.data;
         })
         .catch(err => {
-          console.log(err);
+          Swal.fire({
+            icon: 'error',
+            title: '出错了',
+            text: `${err.response.data.error}`
+          });
         });
     }
   },

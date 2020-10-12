@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import Swal from 'sweetalert2';
 import Toast from '../plugins/toast';
 
 export default {
@@ -94,7 +95,11 @@ export default {
           this.tasks = res.data.data;
         })
         .catch(err => {
-          console.log('todo->gettodolist->error: ', err);
+          Swal.fire({
+            icon: 'error',
+            title: '出错了',
+            text: `${err.response.data.error}`
+          });
         });
     },
     addTask() {
@@ -119,7 +124,11 @@ export default {
           this.getToDoList();
         })
         .catch(err => {
-          console.log('todo->addtask->error: ', err);
+          Swal.fire({
+            icon: 'error',
+            title: '出错了',
+            text: `${err.response.data.error}`
+          });
           this.task = null;
         });
     },
@@ -139,9 +148,10 @@ export default {
           this.getToDoList();
         })
         .catch(err => {
-          Toast.fire({
+          Swal.fire({
             icon: 'error',
-            title: `删除失败, 错误${err}`
+            title: '出错了',
+            text: `${err.response.data.error}`
           });
         });
     },
@@ -168,7 +178,11 @@ export default {
           });
         })
         .catch(err => {
-          console.log(err);
+          Swal.fire({
+            icon: 'error',
+            title: '出错了',
+            text: `${err.response.data.error}`
+          });
         });
     }
   },

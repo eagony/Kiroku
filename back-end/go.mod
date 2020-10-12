@@ -1,4 +1,4 @@
-module rinterest
+module kiroku
 
 go 1.14
 

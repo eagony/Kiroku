@@ -23,7 +23,7 @@ type Comment struct {
 	BlogID uint `json:"blog_id" gorm:"not null;"`
 	// 外键，自引用的评论id
 	// ParentID uint `json:"parent_id" gorm:"not null;"`
-	// 自引用的一对多
+	//TODO: 自引用的一对多
 	// Children []Comment `json:"children" gorm:"foreignKey:ParentID;"`
 }
 

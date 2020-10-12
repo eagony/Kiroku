@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"rinterest/middlewares"
-	"rinterest/utils"
+	"kiroku/middlewares"
+	"kiroku/utils"
 	"strings"
 	"time"
 
@@ -58,6 +58,6 @@ func (i *ImageAPI) upload(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  "OK",
 		"message": "图片上传成功。",
-		"uri":     imgPath,
+		"url":     imgPath,
 	})
 }

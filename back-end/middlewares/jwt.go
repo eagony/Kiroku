@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"rinterest/models"
+	"kiroku/models"
 	"strings"
 	"time"
 

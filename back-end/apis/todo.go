@@ -2,8 +2,8 @@ package apis
 
 import (
 	"net/http"
-	"rinterest/middlewares"
-	"rinterest/models"
+	"kiroku/middlewares"
+	"kiroku/models"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -15,9 +15,8 @@ type ToDoAPI struct{}
 // Register ...
 func (t *ToDoAPI) Register(rg *gin.RouterGroup) {
 	rg.POST("/todos", middlewares.JWT(), t.newone)
-	rg.DELETE("/todos/:id", middlewares.JWT(), t.deleteone)
 	rg.PUT("/todos/:id", middlewares.JWT(), t.updateone)
-
+	rg.DELETE("/todos/:id", middlewares.JWT(), t.deleteone)
 	rg.GET("/users/:id/todos", middlewares.JWT(), t.getallbyuserid)
 }
 
@@ -30,7 +29,7 @@ func (t *ToDoAPI) newone(c *gin.Context) {
 		return
 	}
 
-	if err := myDB.Create(&todo).Error; err != nil {
+	if err := db.Create(&todo).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -38,7 +37,7 @@ func (t *ToDoAPI) newone(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusOK, gin.H{
-		"status":  200,
+		"status":  "OK",
 		"message": "success",
 	})
 }
@@ -47,18 +46,19 @@ func (t *ToDoAPI) deleteone(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id < 0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": err,
+			"error": "invalid query param.",
 		})
 		return
 	}
 
 	todo := models.ToDo{}
-	if err = myDB.Where("id = ?", id).Find(&todo).Error; err != nil {
+	if err = db.Where("id = ?", id).Find(&todo).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
+
 	currentUserID := middlewares.GetUserID()
 	defer middlewares.ResetUserID()
 	if currentUserID != todo.UserID {
@@ -68,7 +68,7 @@ func (t *ToDoAPI) deleteone(c *gin.Context) {
 		return
 	}
 
-	if err := myDB.Delete(&todo).Error; err != nil {
+	if err := db.Delete(&todo).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err,
 		})
@@ -85,13 +85,13 @@ func (t *ToDoAPI) updateone(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "invalid query param",
+			"error": "invalid query param.",
 		})
 		return
 	}
 
 	todo := models.ToDo{}
-	if err = myDB.First(&todo, id).Error; err != nil {
+	if err = db.First(&todo, id).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -102,7 +102,7 @@ func (t *ToDoAPI) updateone(c *gin.Context) {
 	defer middlewares.ResetUserID()
 	if currentUserID != todo.UserID {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"error": "怎么能擅自更改别人的代办呢！",
+			"error": "怎么能擅自修改别人的代办呢！",
 		})
 		return
 	}
@@ -114,7 +114,7 @@ func (t *ToDoAPI) updateone(c *gin.Context) {
 		return
 	}
 
-	myDB.Save(&todo)
+	db.Save(&todo)
 
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  "OK",
@@ -124,9 +124,9 @@ func (t *ToDoAPI) updateone(c *gin.Context) {
 
 func (t *ToDoAPI) getallbyuserid(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
+	if err != nil || id <= 0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
+			"error": "invalid query param.",
 		})
 		return
 	}
@@ -141,7 +141,7 @@ func (t *ToDoAPI) getallbyuserid(c *gin.Context) {
 	}
 
 	todos := []models.ToDo{}
-	if err = myDB.Where("user_id = ?", id).Order("created_at asc").Find(&todos).Error; err != nil {
+	if err = db.Where("user_id = ?", id).Order("created_at asc").Find(&todos).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})

@@ -1,11 +1,11 @@
 package main
 
 import (
+	"kiroku/apis"
+	"kiroku/middlewares"
 	"log"
 	"net/http"
 	"os"
-	"rinterest/apis"
-	"rinterest/middlewares"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"

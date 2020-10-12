@@ -2,8 +2,8 @@ package apis
 
 import (
 	"net/http"
-	"rinterest/middlewares"
-	"rinterest/models"
+	"kiroku/middlewares"
+	"kiroku/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,12 +30,12 @@ func (t *TagAPI) newone(c *gin.Context) {
 	defer middlewares.ResetUserRole()
 	if currentUserRole != "admin" {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"error": "非管理员无法添加标签！",
+			"error": "权限不足，非管理员无法添加标签！",
 		})
 		return
 	}
 
-	if err := myDB.Create(&tag).Error; err != nil {
+	if err := db.Create(&tag).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -69,7 +69,7 @@ func (t *TagAPI) getall(c *gin.Context) {
 	useFor := c.DefaultQuery("use_for", "diary")
 	var tags []models.Tag
 	// extensions.MySQL().Limit(perPage).Offset((page - 1) * perPage).Order("created_at desc").Find(&data)
-	myDB.Where("use_for = ?", useFor).Order("created_at desc").Find(&tags)
+	db.Where("use_for = ?", useFor).Order("created_at asc").Find(&tags)
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  "OK",
 		"message": "success",

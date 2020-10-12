@@ -2,12 +2,11 @@ package apis
 
 import (
 	"net/http"
-	"rinterest/middlewares"
-	"rinterest/models"
+	"kiroku/middlewares"
+	"kiroku/models"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm/clause"
 )
 
 // CommentAPI ...
@@ -15,8 +14,11 @@ type CommentAPI struct{}
 
 // Register ...
 func (co *CommentAPI) Register(rg *gin.RouterGroup) {
+	// 需要验证
 	rg.POST("/comments", middlewares.JWT(), co.newone)
 	rg.DELETE("/comments/:id", middlewares.JWT(), co.deleteone)
+
+	// 无需验证
 	rg.GET("/blogs/:id/comments", co.getallbyblogid)
 	rg.GET("/users/:id/comments", co.getallbyuserid)
 }
@@ -29,7 +31,8 @@ func (co *CommentAPI) newone(c *gin.Context) {
 		})
 		return
 	}
-	if err := myDB.Omit(clause.Associations).Create(&comment).Error; err != nil {
+	// TODO: 自引用一对多的创建
+	if err := db.Create(&comment).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -39,7 +42,6 @@ func (co *CommentAPI) newone(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  "OK",
 		"message": "success",
-		"data":    comment,
 	})
 }
 
@@ -47,18 +49,19 @@ func (co *CommentAPI) deleteone(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "invalid query params",
+			"error": "invalid query param.",
 		})
 		return
 	}
 
 	comment := models.Comment{}
-	if err = myDB.Where("id = ?", id).Find(&comment).Error; err != nil {
+	if err = db.Where("id = ?", id).Find(&comment).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
+
 	currentUserID := middlewares.GetUserID()
 	defer middlewares.ResetUserID()
 	if currentUserID != comment.UserID {
@@ -68,7 +71,7 @@ func (co *CommentAPI) deleteone(c *gin.Context) {
 		return
 	}
 
-	if err := myDB.Delete(&comment).Error; err != nil {
+	if err := db.Delete(&comment).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -85,13 +88,13 @@ func (co *CommentAPI) getallbyblogid(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "invalid query param",
+			"error": "invalid query param.",
 		})
 		return
 	}
 
 	comments := []models.Comment{}
-	if err = myDB.Where("blog_id = ? AND invisibility = ?", id, "public").Order("created_at desc").Find(&comments).Error; err != nil {
+	if err = db.Where("blog_id = ? AND invisibility = ?", id, "public").Order("created_at desc").Find(&comments).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -108,13 +111,13 @@ func (co *CommentAPI) getallbyuserid(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id <= 0 {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "invalid query param",
+			"error": "invalid query param.",
 		})
 		return
 	}
 
 	comments := []models.Comment{}
-	if err = myDB.Where("user_id = ? AND invisibility = ?", id, "public").Order("created_at desc").Find(&comments).Error; err != nil {
+	if err = db.Where("user_id = ? AND invisibility = ?", id, "public").Order("created_at desc").Find(&comments).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})

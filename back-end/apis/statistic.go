@@ -2,7 +2,7 @@ package apis
 
 import (
 	"net/http"
-	"rinterest/models"
+	"kiroku/models"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -17,6 +17,7 @@ func (s *StatisticAPI) Register(rg *gin.RouterGroup) {
 	rg.GET("/statistic/blogs/:id/likes", s.bloglikesplus)
 }
 
+// 统计博客访问量
 func (s *StatisticAPI) blogviewsplus(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id < 0 {
@@ -26,20 +27,21 @@ func (s *StatisticAPI) blogviewsplus(c *gin.Context) {
 		return
 	}
 	blog := models.Blog{}
-	if err := myDB.First(&blog, id).Error; err != nil {
+	if err := db.First(&blog, id).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err,
 		})
 		return
 	}
 	blog.Views++
-	myDB.Save(&blog)
+	db.Save(&blog)
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  "OK",
 		"message": "success",
 	})
 }
 
+// 统计博客点赞数
 func (s *StatisticAPI) bloglikesplus(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil || id < 0 {
@@ -49,14 +51,14 @@ func (s *StatisticAPI) bloglikesplus(c *gin.Context) {
 		return
 	}
 	blog := models.Blog{}
-	if err := myDB.First(&blog, id).Error; err != nil {
+	if err := db.First(&blog, id).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err,
 		})
 		return
 	}
 	blog.Likes++
-	myDB.Save(&blog)
+	db.Save(&blog)
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  "OK",
 		"message": "success",

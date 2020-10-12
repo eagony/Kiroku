@@ -64,6 +64,7 @@
 </template>
 
 <script>
+import Swal from 'sweetalert2';
 import Toast from '../plugins/toast';
 
 export default {
@@ -106,17 +107,17 @@ export default {
           password: this.password
         }
       })
-        .then(res => {
-          console.log(res);
+        .then(() => {
           Toast.fire({
             icon: 'success',
             title: '注册成功，可以登录啦。'
           });
         })
         .catch(err => {
-          Toast.fire({
-            icon: 'success',
-            title: `注册失败, 错误: ${err}`
+          Swal.fire({
+            icon: 'error',
+            title: '出错了',
+            text: `${err.response.data.error}`
           });
         });
       this.goLogin();

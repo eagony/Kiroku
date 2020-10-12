@@ -53,11 +53,15 @@
                 </div>
               </v-col>
               <v-col cols="12">
-                <mavon-editor
-                  ref="md"
-                  v-model="content"
-                  @imgAdd="$imgAdd"
-                ></mavon-editor>
+                <div class="d-flex justify-center">
+                  <mavon-editor
+                    ref="md"
+                    :boxShadow="false"
+                    v-model="content"
+                    @imgAdd="$imgAdd"
+                    @imgDel="$imgDel"
+                  ></mavon-editor>
+                </div>
               </v-col>
             </v-row>
             <!-- 标签 -->
@@ -219,7 +223,11 @@ export default {
           this.chips = res.data.data;
         })
         .catch(err => {
-          console.log('error on Blog.getTags: ', err);
+          Swal.fire({
+            icon: 'error',
+            title: '出错了',
+            text: `${err.response.data.error}`
+          });
         });
     },
     // 获取用户博客列表
@@ -235,7 +243,11 @@ export default {
           this.blogs = res.data.data;
         })
         .catch(err => {
-          console.log('error on Blog.getBlogList: ', err);
+          Swal.fire({
+            icon: 'error',
+            title: '出错了',
+            text: `${err.response.data.error}`
+          });
         });
     },
     // 添加博客
@@ -272,7 +284,11 @@ export default {
           this.getBlogList();
         })
         .catch(err => {
-          console.log('error on Blog.addBlog: ', err);
+          Swal.fire({
+            icon: 'error',
+            title: '出错了',
+            text: `${err.response.data.error}`
+          });
         });
     },
     // 编辑博客
@@ -305,9 +321,10 @@ export default {
               this.getBlogList();
             })
             .catch(err => {
-              Toast.fire({
+              Swal.fire({
                 icon: 'error',
-                title: `删除失败，错误：${err}`
+                title: '出错了',
+                text: `${err.response.data.error}`
               });
             });
         } else if (
@@ -318,8 +335,10 @@ export default {
         }
       });
     },
+    // TODO: 图片上传有问题，点击不弹出
     // 绑定@imgAdd event
     $imgAdd(pos, $file) {
+      console.log('clicked');
       // 第一步.将图片上传到服务器.
       var formdata = new FormData();
       formdata.append('image', $file);
@@ -336,10 +355,11 @@ export default {
         // $vm.$img2Url 详情见本页末尾
         this.$refs.md.$img2Url(
           pos,
-          this.$axios.defaults.baseURL + '/' + res.data.uri
+          this.$axios.defaults.baseURL + '/' + res.data.url
         );
       });
-    }
+    },
+    $imgDel() {}
   },
   mounted() {
     this.getBlogList();

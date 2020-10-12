@@ -1,29 +1,42 @@
 <template>
   <v-card class="">
     <!-- 标题 -->
-    <v-card-title class="d-flex justify-center">
-      <span class="title font-weight-regular">{{ title }}</span>
-    </v-card-title>
+
+    <router-link
+      :to="{ name: 'BlogDetail', params: { id: id } }"
+      style="text-decoration: none; color: black;"
+    >
+      <v-card-title class="d-flex justify-center">
+        <span class="title font-weight-regular">{{ title }}</span>
+      </v-card-title>
+    </router-link>
+
     <!-- 摘要 -->
-    <v-card-text>
-      <router-link
-        :to="{ name: 'BlogDetail', params: { id: id } }"
-        style="text-decoration: none;"
-      >
+    <router-link
+      :to="{ name: 'BlogDetail', params: { id: id } }"
+      style="text-decoration: none; color: black;"
+    >
+      <v-card-text>
         <div class="ml-1 mr-1">
           <h5 class="text-h6 font-weight-regular" style="color: black;">
             {{ summary }}
           </h5>
         </div>
-      </router-link>
-    </v-card-text>
+      </v-card-text>
+    </router-link>
 
     <v-divider></v-divider>
 
     <!-- 标签 -->
     <v-card-text>
-      <v-row justify="center" align="center">
-        <v-col v-if="tags.length > 0" cols="12" md="9" xl="10">
+      <v-row justify="end" align="center">
+        <v-col
+          v-if="tags.length > 0"
+          class="d-flex justify-start"
+          cols="12"
+          md="9"
+          xl="10"
+        >
           <v-chip
             v-for="chip in tags"
             :key="chip.ID"

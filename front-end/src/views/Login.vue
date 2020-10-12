@@ -39,6 +39,7 @@
 </template>
 
 <script>
+import Swal from 'sweetalert2';
 import Toast from '../plugins/toast';
 
 export default {
@@ -71,7 +72,11 @@ export default {
           });
         })
         .catch(err => {
-          alert(err);
+          Swal.fire({
+            icon: 'error',
+            title: '出错了',
+            text: `${err.response.data.error}`
+          });
         });
     },
     goRegister() {

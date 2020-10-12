@@ -106,6 +106,7 @@
 <script>
 import moment from '../plugins/moment';
 import Toast from '../plugins/toast';
+import Swal from 'sweetalert2';
 
 export default {
   name: 'Diary',
@@ -135,7 +136,11 @@ export default {
           this.chips = res.data.data;
         })
         .catch(err => {
-          console.log(err);
+          Swal.fire({
+            icon: 'error',
+            title: '出错了',
+            text: `${err.response.data.error}`
+          });
         });
     },
     getDiaryList() {
@@ -150,7 +155,11 @@ export default {
           this.diaries = res.data.data;
         })
         .catch(err => {
-          console.log(err);
+          Swal.fire({
+            icon: 'error',
+            title: '出错了',
+            text: `${err.response.data.error}`
+          });
         });
     },
     deleteDiary(id) {
@@ -171,9 +180,10 @@ export default {
           }
         })
         .catch(err => {
-          Toast.fire({
+          Swal.fire({
             icon: 'error',
-            title: `删除失败，错误${err}`
+            title: '出错了',
+            text: `${err.response.data.error}`
           });
         });
     },
@@ -204,7 +214,11 @@ export default {
           this.getDiaryList();
         })
         .catch(err => {
-          console.log(err);
+          Swal.fire({
+            icon: 'error',
+            title: '出错了',
+            text: `${err.response.data.error}`
+          });
         });
     }
   },
