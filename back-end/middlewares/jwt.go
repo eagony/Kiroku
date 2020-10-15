@@ -1,10 +1,10 @@
 package middlewares
 
 import (
+	"kiroku/models"
 	"log"
 	"net/http"
 	"os"
-	"kiroku/models"
 	"strings"
 	"time"
 
@@ -47,7 +47,7 @@ func NewToken(user *models.User) (tokens string, err error) {
 		"iat":       time.Now().Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
-	tokens, err = token.SignedString([]byte("you-will-never-guess"))
+	tokens, err = token.SignedString([]byte(os.Getenv("SECRET_KEY")))
 	return
 }
 
@@ -62,7 +62,7 @@ func JWT() gin.HandlerFunc {
 		authorization := c.Request.Header.Get("Authorization")
 		if len(authorization) == 0 {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": "Bad authorization.",
+				"error": "凭证无效，请重试。",
 			})
 			return
 		}
@@ -70,7 +70,7 @@ func JWT() gin.HandlerFunc {
 		token, err := jwt.Parse(bearerToken, SecretKey())
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": "parse token failed.",
+				"error": "解析凭证失败，请重试。",
 			})
 			return
 		}
@@ -84,7 +84,7 @@ func JWT() gin.HandlerFunc {
 
 		if !token.Valid {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": "invalid token.",
+				"error": "凭着无效或被修改，请重试。",
 			})
 		}
 		UserID = uint(claim["id"].(float64))

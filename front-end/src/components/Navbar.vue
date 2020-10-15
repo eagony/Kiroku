@@ -2,7 +2,7 @@
   <nav>
     <!-- 应用栏 -->
     <v-app-bar app elevation="2" color="white">
-      <v-app-bar-nav-icon class="grey--text" @click="drawer = !drawer">
+      <v-app-bar-nav-icon large class="grey--text" @click="drawer = !drawer">
       </v-app-bar-nav-icon>
 
       <v-toolbar-title @click="toIndex">
@@ -17,6 +17,13 @@
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
+      <v-toolbar-title v-if="!this.$store.getters.isLoggedIn">
+        <router-link class="text-decoration-none mr-5" to="/login">
+          <span class=" text-h6 font-weight-dark" style="color:black;"
+            >登录</span
+          >
+        </router-link>
+      </v-toolbar-title>
       <v-toolbar-title v-if="this.$route.path != '/explore'">
         <a class="text-decoration-none mr-5" href="/explore">
           <span class=" text-h6 font-weight-dark" style="color:black;"

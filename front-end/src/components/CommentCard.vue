@@ -26,22 +26,23 @@
     </v-card-title>
     <!-- 摘要 -->
     <v-card-text>
-      <div class="text-justify text-body-1 ml-16 pl-2">
+      <div class="text-justify text-sm-body-2 text-md-body-1 ml-16 pl-2">
+        <p class="font-weight-regular">
         {{ content }}
+        </p>
       </div>
     </v-card-text>
     <v-card-actions>
-      <!-- <v-spacer></v-spacer> -->
-      <v-list class="ml-13 pl-5">
+      <!-- <v-list class="ml-13 pl-5">
         <v-btn icon color="grey">
           <v-icon>mdi-thumb-up</v-icon>
         </v-btn>
         <v-btn icon color="grey" class="ml-3">
           <v-icon>mdi-thumb-down</v-icon>
         </v-btn>
-        <!-- <v-btn text large color="teal" class="ml-2" >评论
-            </v-btn> -->
-      </v-list>
+        <v-btn text large color="teal" class="ml-2" >评论
+            </v-btn>
+      </v-list> -->
     </v-card-actions>
   </v-card>
 </template>
