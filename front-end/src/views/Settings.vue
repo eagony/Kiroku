@@ -25,26 +25,26 @@
                   @change="detectFiles($event)"
                 />
                 <v-text-field
-                  prepend-icon="person"
+                  prepend-icon="mdi-account"
                   label="用户名"
                   v-model="user.username"
                   color="primary"
                 ></v-text-field>
                 <v-textarea
-                  class="ml-7"
+                prepend-icon="mdi-pen"
                   v-model="user.signature"
                   auto-grow
                   counter
                   label="个性签名"
                 ></v-textarea>
                 <v-text-field
-                  prepend-icon="email"
+                  prepend-icon="mdi-email"
                   label="邮箱"
                   v-model="user.email"
                   color="primary"
                 ></v-text-field>
                 <v-text-field
-                  prepend-icon="phone"
+                  prepend-icon="mdi-phone"
                   label="手机"
                   v-model="user.phone"
                   color="primary"

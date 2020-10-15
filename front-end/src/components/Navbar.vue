@@ -78,6 +78,21 @@
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <!-- 后台数据管理 -->
+        <v-list-item
+          v-if="this.$store.getters.isAdmin"
+          link
+          style="margin-top: 5px;"
+          to="/admin"
+        >
+          <v-list-item-icon>
+            <v-icon>mdi-chart-donut</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title>管理</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
 
       <template v-slot:append v-if="this.$store.getters.isLoggedIn">

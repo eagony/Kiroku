@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@babel/runtime": "7.0.0-beta.46",
-    "@mdi/font": "^3.6.95",
+    "@mdi/font": "^5.7.55",
     "axios": "^0.20.0",
     "core-js": "^3.6.5",
     "github-markdown-css": "^4.0.0",

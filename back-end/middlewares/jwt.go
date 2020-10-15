@@ -84,7 +84,7 @@ func JWT() gin.HandlerFunc {
 
 		if !token.Valid {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": "凭着无效或被修改，请重试。",
+				"error": "凭证无效或被修改，请重试。",
 			})
 		}
 		UserID = uint(claim["id"].(float64))

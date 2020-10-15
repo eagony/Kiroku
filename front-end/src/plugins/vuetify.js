@@ -1,11 +1,12 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 import 'vuetify/dist/vuetify.min.css';
+import '@mdi/font/css/materialdesignicons.css';
 
 Vue.use(Vuetify);
 
 export default new Vuetify({
-  iconfont: 'md',
+  iconfont: 'mdi',
   theme: {
     primary: '#9652ff',
     success: '#3cd1c2',

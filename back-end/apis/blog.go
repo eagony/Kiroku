@@ -1,9 +1,9 @@
 package apis
 
 import (
-	"net/http"
 	"kiroku/middlewares"
 	"kiroku/models"
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -64,14 +64,19 @@ func (b *BlogAPI) getone(c *gin.Context) {
 		return
 	}
 
-	currentUserID := middlewares.GetUserID()
-	defer middlewares.ResetUserID()
-	if blog.Invisibility == "private" && currentUserID != blog.UserID {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"error": "不能偷看别人的私密博客哦！",
-		})
-		return
+	if blog.Invisibility == "private" {
+		// 验证
+		middlewares.JWT()(c)
+		currentUserID := middlewares.GetUserID()
+		defer middlewares.ResetUserID()
+		if currentUserID != blog.UserID {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error": "不能偷看别人的私密博客哦！",
+			})
+			return
+		}
 	}
+
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  "OK",
 		"message": "success",
@@ -175,8 +180,8 @@ func (b *BlogAPI) getallbyuserid(c *gin.Context) {
 		})
 		return
 	}
-	bloges := []models.Blog{}
-	if err = db.Preload("Tags").Preload("Comments").Where("user_id = ?", id).Order("created_at desc").Find(&bloges).Error; err != nil {
+	data := []models.Blog{}
+	if err = db.Preload("Tags").Preload("Comments").Where("user_id = ?", id).Order("created_at desc").Find(&data).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -185,13 +190,13 @@ func (b *BlogAPI) getallbyuserid(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  "OK",
 		"message": "success",
-		"data":    bloges,
+		"data":    data,
 	})
 }
 
 func (b *BlogAPI) getpublic(c *gin.Context) {
-	bloges := []models.Blog{}
-	if err := db.Preload("Tags").Preload("Comments").Where("invisibility = ?", "public").Order("created_at desc").Find(&bloges).Error; err != nil {
+	data := []models.Blog{}
+	if err := db.Preload("Tags").Preload("Comments").Where("invisibility = ?", "public").Order("created_at desc").Find(&data).Error; err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
@@ -200,6 +205,6 @@ func (b *BlogAPI) getpublic(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, gin.H{
 		"status":  "OK",
 		"message": "success",
-		"data":    bloges,
+		"data":    data,
 	})
 }

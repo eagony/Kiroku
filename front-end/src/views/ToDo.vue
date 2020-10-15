@@ -31,7 +31,7 @@
         >
           <template v-slot:append>
             <v-icon v-if="task" @click="addTask">
-              add
+              mdi-plus
             </v-icon>
           </template>
         </v-text-field>
@@ -51,7 +51,7 @@
                 :class="(task.done && 'success--text') || 'primary--text'"
                 @click="updateTask(task)"
               ></v-checkbox>
-              <v-icon @click="deleteTask(task.ID)">delete</v-icon>
+              <v-icon @click="deleteTask(task.ID)">mdi-delete</v-icon>
             </div>
           </v-card-title>
         </v-card>

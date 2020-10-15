@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row class="justify-center">
+    <v-row class="justify-center" dense>
       <v-col cols="12" md="10" xl="8">
         <!-- 提示栏 -->
         <v-card>

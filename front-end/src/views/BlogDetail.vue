@@ -154,6 +154,7 @@ export default {
       })
         .then(res => {
           this.blog = res.data.data;
+          this.blogViewsPlus();
           this.getAuthor();
           this.getComments();
         })
@@ -163,6 +164,7 @@ export default {
             title: '出错了',
             text: `${err.response.data.error}`
           });
+          this.$router.push('/');
         });
     },
     getAuthor() {
@@ -204,15 +206,13 @@ export default {
         });
     },
     blogViewsPlus() {
-      this.$axios
-        .get(`/statistic/blogs/${this.$route.params.id}/views`)
-        .catch(err => {
-          Swal.fire({
-            icon: 'error',
-            title: '出错了',
-            text: `${err.response.data.error}`
-          });
+      this.$axios.get(`/statistic/blogs/${this.blog.ID}/views`).catch(err => {
+        Swal.fire({
+          icon: 'error',
+          title: '出错了',
+          text: `${err.response.data.error}`
         });
+      });
     },
     blogLikesPlus() {
       if (this.thumbUpColor == 'pink') {
@@ -243,7 +243,6 @@ export default {
   },
   created() {
     this.getBlog();
-    this.blogViewsPlus();
   },
   mounted() {
     highlightCode();

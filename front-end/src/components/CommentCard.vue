@@ -28,7 +28,7 @@
     <v-card-text>
       <div class="text-justify text-sm-body-2 text-md-body-1 ml-16 pl-2">
         <p class="font-weight-regular">
-        {{ content }}
+          {{ content }}
         </p>
       </div>
     </v-card-text>
